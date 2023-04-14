@@ -24,4 +24,12 @@ class Jeu extends Model
     {
         return $this->hasOne(Categorie::class);
     }
+
+    public function commentaires(){
+        return $this->hasMany(Commentaire::class);
+    }
+
+    public function likes(){
+        return $this->hasMany(Like::class);
+    }
 }
