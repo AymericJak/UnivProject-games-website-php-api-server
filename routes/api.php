@@ -42,4 +42,4 @@ Route::post('jeu/{id}/achat', [\App\Http\Controllers\Api\JeuController::class, '
 
 Route::get('editeurs', [EditeurController::class, 'index']);
 
-Route::get('themes', [ThemeController::class, 'index']);
+Route::get('thecmes', [ThemeController::class, 'index']);
