@@ -89,4 +89,33 @@ class AuthController extends Controller {
         ]);
     }
 
+    public function refresh() {
+        return response()->json([
+            'status' => 'success',
+            'user' => Auth::user(),
+            'authorisation' => [
+                'token' => Auth::refresh(),
+                'type' => 'bearer',
+            ]
+        ]);
+    }
+
+    public function monProfil() {
+        if (!Auth::check()) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthorized"
+            ]);
+        }
+        $user = Auth::user();
+        return response()->json([
+            'status' => 'success',
+            "message" => "Successfully profil info",
+            'adherent' => $user,
+            'commentaires' => "TODO",
+            'achats' => "TODO",
+            'likes' => "TODO"
+        ]);
+    }
+
 }
