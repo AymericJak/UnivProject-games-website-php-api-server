@@ -118,4 +118,23 @@ class AuthController extends Controller {
         ]);
     }
 
+    public function update(Request $request, $id) {
+        $request->validate([
+            'login' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'pseudo' => 'required|string|max:255',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return response()->json([
+            'status' => "success",
+            'message' => "Adherent updated successfully",
+            'adherent' => $user
+        ], 200);
+        // TODO Code 422
+    }
 }
