@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CategorieController;
 use App\Http\Controllers\Api\EditeurController;
 use App\Http\Controllers\Api\ThemeController;
 use Illuminate\Http\Request;
@@ -44,3 +45,5 @@ Route::delete('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'dest
 Route::get('editeurs', [EditeurController::class, 'index']);
 
 Route::get('themes', [ThemeController::class, 'index']);
+
+Route::get('categories', [CategorieController::class, 'index']);
