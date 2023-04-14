@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller {
 
@@ -100,14 +101,15 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function monProfil() {
-        if (!Auth::check()) {
+    public function profil($user_id) {
+        $user = User::findOrFail($user_id);
+        if (!Auth::check() || (Auth::user()->id != $user_id && !Auth::user()->isAdmin())) {
             return response()->json([
                 "status" => "error",
                 "message" => "Unauthorized"
-            ]);
+            ], 403);
         }
-        $user = Auth::user();
+
         return response()->json([
             'status' => 'success',
             "message" => "Successfully profil info",

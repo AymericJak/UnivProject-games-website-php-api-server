@@ -24,9 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('register', 'register');
-    Route::post('logout', 'logout');
+    Route::post('logout', 'logout')->middleware(['auth:api']);
     Route::post('refresh', 'refresh');
-    Route::get('monProfil', 'monProfil')->name('profil');
+    Route::get('profil/{user_id}', 'profil')->name('profil');
     Route::put('update/{user_id}', 'update')->name('update')->middleware(['auth', 'role:admin']);
     Route::put('updateAvatar/{user_id}', 'updateAvatar')->name('updateAvatar')->middleware(['auth', 'role:admin']);
 });
