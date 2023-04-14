@@ -8,6 +8,7 @@ use App\Http\Resources\CommentaireResource;
 use App\Models\Commentaire;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CommentaireController extends Controller
 {
@@ -26,6 +27,12 @@ class CommentaireController extends Controller
      */
     public function store(CommentaireRequest $request)
     {
+        if (Gate::denies('store-commentaire')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vous n\'êtes pas autorisé à ajouter un commentaire !'
+            ], 403);
+        }
         $commentaire = new Commentaire();
         $commentaire->commentaire = $request->commentaire;
         $commentaire->date_com = new dateTime();
@@ -66,6 +73,12 @@ class CommentaireController extends Controller
     public function update(CommentaireRequest $request, int $id)
     {
         $commentaire = Commentaire::findOrFail($id);
+        if (Gate::denies('update-commentaire', $commentaire)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Vous n\'êtes pas autorisé à modifier ce commentaire !'
+            ], 403);
+        }
         $commentaire->update($request->all());
 
         $commentaire->commentaire = $request->commentaire;
@@ -102,6 +115,12 @@ class CommentaireController extends Controller
     {
         try {
             $commentaire = Commentaire::findOrFail($id);
+            if (Gate::denies('delete-commentaire', $commentaire)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Vous n\'êtes pas autorisé à supprimer ce commentaire !'
+                ], 403);
+            }
             $commentaire->delete();
             return response()->json([
                 'status' => 'success',
