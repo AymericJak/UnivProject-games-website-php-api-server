@@ -38,7 +38,7 @@ Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::cl
 
 Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class, 'store']);
 Route::patch('jeu/{id}/edit', [\App\Http\Controllers\Api\JeuController::class, 'edit']);
-Route::patch('jeu/{id}/editUrl', [\App\Http\Controllers\Api\JeuController::class, 'edit_url']);
+Route::put('jeu/{id}/editUrl', [\App\Http\Controllers\Api\JeuController::class, 'edit_url']);
 
 Route::post('jeu/{id}/achat', [\App\Http\Controllers\Api\JeuController::class, 'achat']);
 Route::delete('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'destroy']);
