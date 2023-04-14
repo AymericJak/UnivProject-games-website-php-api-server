@@ -25,3 +25,14 @@ Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(functi
     Route::post('refresh', 'refresh');
     Route::get('monProfil', 'monProfil')->name('profil');
 });
+
+Route::get('jeu', [\App\Http\Controllers\Api\JeuController::class, 'index']);
+
+Route::get('jeu/FiltrageAgeMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageAgeMin']);
+Route::get('jeu/FiltrageDuree', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageDuree']);
+Route::get('jeu/FiltrageJoueursMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMin']);
+Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMax']);
+Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class, 'indexMostLiked']);
+Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class, 'indexBestRated']);
+
+Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class, 'store']);
