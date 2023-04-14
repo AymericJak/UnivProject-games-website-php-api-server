@@ -9,6 +9,7 @@ use App\Models\Commentaire;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use OpenApi\Attributes as OA;
 
 class CommentaireController extends Controller
 {
@@ -22,6 +23,40 @@ class CommentaireController extends Controller
 
     }
 
+    #[OA\Post(
+        path: "/api/commentaire",
+        operationId: "create",
+        description: "Ajouter un commentaire dans la base de données",
+        requestBody: new OA\RequestBody(
+            required: true,
+        ),
+        tags: ["Commentaires"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Création d'un commentaire",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "status", type: "boolean"),
+                    new OA\Property(property: "message", type: "string"),
+                    new OA\Property(property: "commentaire")
+                ],type: "object")
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Erreur",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "message", type: "string"),
+                    new OA\Property(
+                        property: "errors",
+                        properties: [
+                            new OA\Property(property: "commentaire|date_com|note|etat", type: "array", items: new OA\Items(type: "string"))
+                        ],
+                        type: "object",
+                    )
+                ],type: "object")
+            ),
+        ]
+    )]
     /**
      * Store a newly created resource in storage.
      */
@@ -67,6 +102,32 @@ class CommentaireController extends Controller
         //
     }
 
+    #[OA\Put(
+        path: "/commentaires/{id}",
+        operationId: "update",
+        description: "Modifier un commentaire dans la base",
+        requestBody: new OA\RequestBody(
+            required: true,
+        ), tags: ["Commentaires"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Identifiant du commentaire",
+                in: "path", required: "true",
+                schema: new OA\Schema(type: "integer"))
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Modification d'un commentaire",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "status", type: "boolean"),
+                    new OA\Property(property: "message", type: "string"),
+                    new OA\Property(property: "commentaire")
+                ], type: "object")
+            ),
+        ],
+    )]
     /**
      * Update the specified resource in storage.
      */
@@ -108,6 +169,40 @@ class CommentaireController extends Controller
 
     }
 
+    #[OA\Delete(
+        path: "/commentaires/{id}",
+        operationId: "destroy",
+        description: "Supprime un commentaire",
+        tags: ["Commentaires"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                description: "Identifiant du commentaire",
+                in: "path", required: "true",
+                schema: new OA\Schema(type: "integer"))
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Supprime un commentaire",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "status", type: "boolean"),
+                    new OA\Property(property: "message", type: "string"),
+                ], type: "object")
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Commentaire non trouvée",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "message", type: "string"),
+                    new OA\Property(property: "errors", properties: [
+                        new OA\Property(property: "id", type: "array", items: new OA\Items(type: "string"))
+                    ], type: "object"
+                    ),
+                ], type: "object")
+            )
+        ]
+    )]
     /**
      * Remove the specified resource from storage.
      */
