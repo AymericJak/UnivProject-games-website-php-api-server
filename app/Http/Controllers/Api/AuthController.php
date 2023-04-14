@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdherentRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -120,24 +121,28 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function update(Request $request, $user_id) {
-        $request->validate([
-            'login' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'pseudo' => 'required|string|max:255',
-        ]);
+    public function update(AdherentRequest $request, $user_id) {
+        if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthorized"
+            ], 422);
+        }
 
         $user = User::findOrFail($user_id);
+
+        if ($request->has('password')) {
+            $request->merge([
+                'password' => Hash::make($request->input('password'))
+            ]);
+        }
+
         $user->update($request->all());
         return response()->json([
             'status' => "success",
             'message' => "Adherent updated successfully",
             'adherent' => $user
         ], 200);
-        // TODO Code 422
     }
 
     public function updateAvatar(Request $request, $user_id) {
