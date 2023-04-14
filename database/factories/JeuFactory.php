@@ -33,9 +33,9 @@ class JeuFactory extends Factory
             'nombre_joueurs_max' => fake()->numberBetween(1,20),
             'duree_partie' => fake()->numberBetween(100,200),
             'valide' => true,
-            'categorie_id' => $this->faker->unique()->randomElement($categorie),
+            'categorie_id' => $this->faker->randomElement($categorie),
             'theme_id' => $this->faker->randomElement($theme),
-            'editeur_id' => $this->faker->unique()->randomElement($editeur),
+            'editeur_id' => $this->faker->randomElement($editeur),
         ];
     }
 }
