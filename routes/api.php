@@ -36,3 +36,7 @@ Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::cl
 Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class, 'indexBestRated']);
 
 Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class, 'store']);
+
+Route::post('commentaire', [\App\Http\Controllers\Api\CommentaireController::class,'store'])->middleware(['auth', 'role:adherent','role:visiteur','role:adherent-premium','role:commentaire-moderateur','role:administrateur']);
+Route::delete('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'destroy'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
+Route::patch('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'update'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
