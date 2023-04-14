@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AchatRequest;
 use App\Http\Requests\JeuRequest;
+use App\Models\Achat;
 use App\Models\Categorie;
 use App\Models\Editeur;
 use App\Models\Jeu;
@@ -14,7 +16,8 @@ use Illuminate\Support\Facades\Auth;
 
 class JeuController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         if (Auth::check()) {
             return $this->indexVisiteur($request);
         }
@@ -68,15 +71,17 @@ class JeuController extends Controller
         ], 200);
     }
 
-    public function indexVisiteur(Request $request){
+    public function indexVisiteur(Request $request)
+    {
         $jeux = Jeu::inRandomOrder()->take(5)->get();
         return response()->json([
             'status' => true,
             'Jeux' => $jeux->pluck('nom')->toArray()
-            ], 200);
+        ], 200);
     }
 
-    public function indexAdherent(Request $request){
+    public function indexAdherent(Request $request)
+    {
         $jeux = Jeu::where('valide', true)->get();
         return response()->json([
             'status' => true,
@@ -84,40 +89,46 @@ class JeuController extends Controller
         ], 200);
     }
 
-    public function indexFiltrageAgeMin(Request $request){
+    public function indexFiltrageAgeMin(Request $request)
+    {
         $jeux = Jeu::orderBy('age_min')->get();
         return $jeux;
     }
 
-    public function indexFiltrageDuree(Request $request){
+    public function indexFiltrageDuree(Request $request)
+    {
         $jeux = Jeu::orderBy('duree_partie')->get();
         return $jeux;
     }
 
-    public function indexFiltrageJoueursMin(Request $request){
+    public function indexFiltrageJoueursMin(Request $request)
+    {
         $jeux = Jeu::orderBy('nombre_joueurs_min')->get();
         return $jeux;
     }
 
-    public function indexFiltrageJoueursMax(Request $request){
+    public function indexFiltrageJoueursMax(Request $request)
+    {
         $jeux = Jeu::orderBy('nombre_joueurs_max')->get();
         return $jeux;
     }
 
-    public function indexMostLiked(Request $request){
+    public function indexMostLiked(Request $request)
+    {
         $jeux = Jeu::where('valide', true)->get();
-        foreach($jeux as $jeu){
+        foreach ($jeux as $jeu) {
             $jeu->nb_likes = count($jeu->likes()->get());
         }
         return $jeux->sortByDesc('nb_likes')->take(5);
     }
 
-    public function indexBestRated(Request $request){
+    public function indexBestRated(Request $request)
+    {
         $jeux = Jeu::where('valide', true)->get();
-        foreach($jeux as $jeu){
+        foreach ($jeux as $jeu) {
             $commentaires = $jeu->commentaires()->get();
             $total = 0;
-            foreach ($commentaires as $commentaire){
+            foreach ($commentaires as $commentaire) {
                 $total += $commentaire->note;
             }
             $jeu->note = $total / count($commentaires);
@@ -125,8 +136,9 @@ class JeuController extends Controller
         return $jeux->sortByDesc('note')->take(5);
     }
 
-    public function store(JeuRequest $request){
-        try{
+    public function store(JeuRequest $request)
+    {
+        try {
             $jeu = new Jeu();
             $jeu->nom = $request->nom;
             $jeu->description = $request->description;
@@ -145,17 +157,18 @@ class JeuController extends Controller
                 'status' => 'success',
                 'message' => 'Game created successfully',
                 'jeu' => $jeu,
-            ],200);
-        } catch (Exception $e){
+            ], 200);
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Le jeu n\'a pas pu être créé',
                 'errors' => $e,
-            ],422);
+            ], 422);
         }
     }
 
-    public function edit(Request $request, $id){
+    public function edit(Request $request, $id)
+    {
         $jeu = Jeu::find($id);
 
         if (!$jeu) {
@@ -171,6 +184,33 @@ class JeuController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Game updated successfully', 'jeu' => $jeu], 200);
         } else {
             return response()->json(['status' => 'error', 'message' => 'Une erreur est survenue lors de la modification du jeu.'], 422);
+        }
+    }
+
+    public function achat(AchatRequest $request, $id)
+    {
+        try {
+            $jeu = Jeu::findOrFail($id);
+            $achat = new Achat();
+            $achat->date_achat = date('Y-m-d');
+            $achat->lieu_achat = $request->lieu_achat;
+            $achat->prix = $request->prix;
+            $achat->user_id = Auth::user()->id;
+            $achat->jeu_id = $id;
+            $achat->save();
+            return response()->json([
+                    'status' => 'success',
+                    'message' => 'Purchase created successfully',
+                    'achat' => $achat,
+                    'adherant' => Auth::user(),
+                    'jeu' => $jeu]
+                , 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Le jeu n\'a pas pu être créé',
+                'errors' => $e,
+            ], 422);
         }
     }
 }
