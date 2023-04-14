@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller {
 
@@ -146,8 +145,14 @@ class AuthController extends Controller {
     }
 
     public function updateAvatar(Request $request, $user_id) {
+        if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthorized"
+            ], 422);
+        }
         $request->validate([
-            'avatar' => 'required|string|max:255',
+            'avatar' => 'required|string',
         ]);
         $user = User::findOrFail($user_id);
         $user->update([
@@ -156,8 +161,7 @@ class AuthController extends Controller {
         return response()->json([
             'status' => "success",
             'message' => "Adherent avatar updated successfully",
-            "url_media" => "url_media_modifie"
+            "avatar" => $request->avatar
         ], 200);
-        // TODO CODE 422
     }
 }
