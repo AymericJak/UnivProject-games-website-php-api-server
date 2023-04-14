@@ -3,19 +3,65 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\JeuRequest;
 use App\Models\Jeu;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JeuController extends Controller
 {
-    public function index(request $request){
+    public function index(JeuRequest $request){
         if (Auth::check()) {
-            return $this->indexAdherent($request);
-        }
-        else{
             return $this->indexVisiteur($request);
         }
+        $age = $request->query('age');
+        $duree = $request->query('duree');
+        $nb_joueurs_min = $request->query('nb_joueurs_min');
+        $nb_joueurs_max = $request->query('nb_joueurs_max');
+        $sort = $request->query('sortby');
+        $categorie = $request->query('categorie');
+        $theme = $request->query('theme');
+        $editeur = $request->query('editeur');
+
+        $query = Jeu::query();
+
+        if ($age) {
+            $query->where('age_min', '>=', $age);
+        }
+
+        if ($duree) {
+            $query->where('duree_min', '>=', $duree);
+        }
+
+        if ($nb_joueurs_min) {
+            $query->where('nb_joueurs_min', '>=', $nb_joueurs_min);
+        }
+
+        if ($nb_joueurs_max) {
+            $query->where('nb_joueurs_max', '<=', $nb_joueurs_max);
+        }
+
+        if ($categorie) {
+            $query->where('categorie', '=', $categorie);
+        }
+
+        if ($theme) {
+            $query->where('theme', '=', $theme);
+        }
+
+        if ($editeur) {
+            $query->where('editeur', '=', $editeur);
+        }
+
+        if ($sort && in_array($sort, ['asc', 'desc'])) {
+            $query->orderBy('nom', $sort);
+        }
+
+        $jeux = $query->get();
+        return response()->json([
+            'status' => true,
+            'Jeux' => $jeux->pluck('nom')->toArray()
+        ], 200);
     }
 
     public function indexVisiteur(Request $request){
