@@ -22,14 +22,16 @@ class JeuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'age' => 'integer',
-            'duree' => 'integer',
-            'nb_joueurs_min' => 'integer',
-            'nb_joueurs_max' => 'integer',
-            'sort' => 'asc|desc',
-            'categorie' => 'string',
-            'theme' => 'string',
-            'editeur' => 'string',
+            'nom' => 'required|string',
+            'description' => 'required|string',
+            'langue' => 'required|string',
+            'age_min' => 'required|integer',
+            'nombre_joueurs_min' => 'required|integer',
+            'nombre_joueurs_max' => 'required|integer',
+            'duree_partie' => 'required|integer',
+            'categorie' => 'required|string',
+            'theme' => 'required|string',
+            'editeur' => 'required|string',
         ];
     }
 }

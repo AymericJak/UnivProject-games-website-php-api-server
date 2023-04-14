@@ -28,4 +28,6 @@ Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::cl
 Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class,'indexBestRated']);
 
 Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class,'store']);
+Route::patch('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class,'edit']);
+
 

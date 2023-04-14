@@ -136,11 +136,12 @@ class JeuController extends Controller
         $jeu->nombre_joueurs_min = $request->nombre_joueurs_min;
         $jeu->nombre_joueurs_max = $request->nombre_joueurs_max;
         $jeu->duree_partie = $request->duree_partie;
-        $jeu->categorie = Categorie::where('nom', $request->categorie)->value('id');
-        $jeu->theme = Theme::where('nom', $request->theme)->value('id');
-        $jeu->editeur = Editeur::where('nom', $request->editeur)->value('id');
+        $jeu->categorie_id = Categorie::where('nom', $request->categorie)->value('id');
+        $jeu->theme_id = Theme::where('nom', $request->theme)->value('id');
+        $jeu->editeur_id = Editeur::where('nom', $request->editeur)->value('id');
         $jeu->valide = true;
-        $jeu->url_media = 'image/no-image.png';
+        $jeu->url_media = $request->url_media;
+        $jeu->save();
         return response()->json([
             'status' => 'success',
             'message' => 'Game created successfully',
@@ -150,8 +151,34 @@ class JeuController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Le jeu n\'a pas pu être créé',
-                'errors' => $e->errors(),
-            ]);
+                'errors' => $e,
+            ],422);
+        }
+    }
+
+    public function edit(JeuRequest $request, $id){
+        $jeu = Jeu::find($id);
+
+        if (!$jeu) {
+            return response()->json(['status' => 'error', 'message' => 'Jeu introuvable.'], 404);
+        }
+
+        $jeu->nom = $request->nom;
+        $jeu->description = $request->description;
+        $jeu->langue = $request->langue;
+        $jeu->age_min = $request->age_min;
+        $jeu->nombre_joueurs_min = $request->nombre_joueurs_min;
+        $jeu->nombre_joueurs_max = $request->nombre_joueurs_max;
+        $jeu->duree_partie = $request->duree_partie;
+        $jeu->categorie_id = Categorie::where('nom', $request->categorie)->value('id');
+        $jeu->theme_id = Theme::where('nom', $request->theme)->value('id');
+        $jeu->editeur_id = Editeur::where('nom', $request->editeur)->value('id');
+        $jeu->url_media = $request->url_media;
+
+        if ($jeu->save()) {
+            return response()->json(['status' => 'success', 'message' => 'Game updated successfully', 'jeu' => $jeu], 200);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Une erreur est survenue lors de la modification du jeu.'], 422);
         }
     }
 }
