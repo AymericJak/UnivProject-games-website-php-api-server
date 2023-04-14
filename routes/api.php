@@ -27,4 +27,4 @@ Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::c
 Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class,'indexMostLiked']);
 Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class,'indexBestRated']);
 
-Route::get('editeurs', [EditeurController::class, 'index']);
+Route::get('edidteurs', [EditeurController::class, 'index']);
