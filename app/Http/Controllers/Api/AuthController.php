@@ -14,6 +14,32 @@ class AuthController extends Controller {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
+    public function login(Request $request) {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+        $credentials = $request->only('email', 'password');
+
+        $token = Auth::attempt($credentials);
+        if (!$token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+        $user = Auth::user();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Adherent logged successfully',
+            'adherent' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
+    }
+
 
     public function register(Request $request) {
         $request->validate([
@@ -35,7 +61,7 @@ class AuthController extends Controller {
             'avatar' => 'avatarParDefaut.png'
         ]);
         Auth::login($user);
-        $credentials = $user->only('login', 'password');
+        $credentials = $user->only('email', 'password');
         $token = Auth::attempt($credentials); // boolean;
 
         if (!$token) {
