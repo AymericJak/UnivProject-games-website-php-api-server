@@ -19,7 +19,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('jeu', [\App\Http\Controllers\Api\JeuController::class,'index']);
-Route::get('jeu/AgeMin', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageAgeMin']);
-Route::get('jeu/JoueursMax', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageJoueursMax']);
-Route::get('jeu/JoueursMin', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageJoueursMin']);
-Route::get('jeu/Duree', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageDuree']);
+
+Route::get('jeu/FiltrageAgeMin', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageAgeMin']);
+Route::get('jeu/FiltrageDuree', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageDuree']);
+Route::get('jeu/FiltrageJoueursMin', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageJoueursMin']);
+Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageJoueursMax']);
+Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class,'indexMostLiked']);
+Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class,'indexBestRated']);
+
+Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class,'store']);
+
