@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jeu', function (Blueprint $table) {
+        Schema::create('jeus', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
             $table->string('description');
@@ -25,15 +25,15 @@ return new class extends Migration
             $table->integer('nombre_joueurs_max');
             $table->integer('duree_partie');
             $table->boolean('valide');
-            $table->foreignId(Categorie::class)
+            $table->foreignIdFor(Categorie::class)
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->foreignId(Theme::class)
+            $table->foreignIdFor(Theme::class)
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->foreignId(Editeur::class)
+            $table->foreignIdFor(Editeur::class)
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
