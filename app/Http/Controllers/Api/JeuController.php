@@ -20,12 +20,18 @@ class JeuController extends Controller
 
     public function indexVisiteur(Request $request){
         $jeux = Jeu::inRandomOrder()->take(5)->get();
-        return $jeux;
+        return response()->json([
+            'status' => true,
+            'Jeux' => $jeux->pluck('nom')->toArray()
+            ], 200);
     }
 
     public function indexAdherent(Request $request){
         $jeux = Jeu::where('valide', true)->get();
-        return $jeux;
+        return response()->json([
+            'status' => true,
+            'Jeux' => $jeux->pluck('nom')->toArray()
+        ], 200);
     }
 
     public function indexFiltrageAgeMin(Request $request){
