@@ -114,9 +114,9 @@ class AuthController extends Controller {
             'status' => 'success',
             "message" => "Successfully profil info",
             'adherent' => $user,
-            'commentaires' => "TODO",
-            'achats' => "TODO",
-            'likes' => "TODO"
+            'commentaires' => $user->commentaires,
+            'achats' => $user->achats,
+            'likes' => $user->likes
         ]);
     }
 
