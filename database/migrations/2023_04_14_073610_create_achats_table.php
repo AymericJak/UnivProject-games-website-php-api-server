@@ -23,7 +23,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->dateTime('date_achat');
             $table->string('lieu_achat');
-            $table->integer('number');
+            $table->integer('prix');
             $table->timestamps();
         });
     }
