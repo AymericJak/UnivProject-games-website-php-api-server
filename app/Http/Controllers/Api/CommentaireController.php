@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CommentaireRequest;
 use App\Http\Resources\CommentaireResource;
 use App\Models\Commentaire;
+use DateTime;
 use Illuminate\Http\Request;
 
 class CommentaireController extends Controller
@@ -27,7 +28,7 @@ class CommentaireController extends Controller
     {
         $commentaire = new Commentaire();
         $commentaire->commentaire = $request->commentaire;
-        $commentaire->date_com = $request->date_com;
+        $commentaire->date_com = new dateTime();
         $commentaire->note = $request->note;
         if($request->etat){
             $commentaire->etat = $request->etat;
@@ -62,9 +63,36 @@ class CommentaireController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CommentaireRequest $request, int $id)
     {
-        //
+        $commentaire = Commentaire::findOrFail($id);
+        $commentaire->update($request->all());
+
+        $commentaire->commentaire = $request->commentaire;
+        $commentaire->date_com = new dateTime();
+        $commentaire->note = $request->note;
+        if($request->etat){
+            $commentaire->etat = $request->etat;
+        } else{
+            $commentaire->etat = 'public';
+        }
+        $commentaire->user_id = auth()->user()->id;
+        $commentaire->jeu_id = $request->jeu_id;
+        $commentaire->save();
+
+        if($commentaire) {
+            return response()->json([
+                "status" => "success",
+                'message' => "Commentaire updated successfully !",
+                'commentaire' => $commentaire
+            ], 200);
+        }else{
+            return response()->json([
+                "status" => "error",
+                'message' => "Erreur lors de la modification du commentaire !",
+            ], 422);
+        }
+
     }
 
     /**
@@ -72,6 +100,15 @@ class CommentaireController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $commentaire = Commentaire::findOrFail($id);
+            $commentaire->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => "Comment successfully deleted",
+            ],200);
+        } catch (\Exception $e) {
+            return response()->json(['message'=>'comment not found!'], 422);
+        }
     }
 }
