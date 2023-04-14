@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Documentation</title>
-    @vite('resource/js/swagger.js')
+    @vite('resources/js/swagger.js')
 </head>
 <body>
     <div id="swagger-api"></div>
