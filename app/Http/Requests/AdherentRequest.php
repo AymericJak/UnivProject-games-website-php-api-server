@@ -9,7 +9,7 @@ class AdherentRequest extends FormRequest {
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool {
-        return false;
+        return true;
     }
 
     /**
@@ -19,8 +19,8 @@ class AdherentRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "login" => "required|string|between:1,50",
-            "email" => "required|string|between:1,50",
+            "login" => "required|string|between:1,50|unique:users",
+            "email" => "required|string|between:1,50|unique:users",
             "password" => "required|string|between:1,50",
             "nom" => "required|string|between:1,50",
             "prenom" => "required|string|between:1,50",
