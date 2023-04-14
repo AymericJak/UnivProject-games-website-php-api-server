@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdherentRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ class AuthController extends Controller {
         return response()->json([
             'status' => 'success',
             'message' => 'Adherent logged successfully',
-            'adherent' => $user,
+            'adherent' => new UserResource($user),
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
@@ -74,7 +75,7 @@ class AuthController extends Controller {
         return response()->json([
             'status' => 'success',
             'message' => 'Adherent created successfully',
-            'adherent' => $user,
+            'adherent' => new UserResource($user),
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
@@ -93,7 +94,7 @@ class AuthController extends Controller {
     public function refresh() {
         return response()->json([
             'status' => 'success',
-            'user' => Auth::user(),
+            'user' => new UserResource(Auth::user()),
             'authorisation' => [
                 'token' => Auth::refresh(),
                 'type' => 'bearer',
@@ -113,7 +114,7 @@ class AuthController extends Controller {
         return response()->json([
             'status' => 'success',
             "message" => "Successfully profil info",
-            'adherent' => $user,
+            'adherent' => new UserResource($user),
             'commentaires' => $user->commentaires,
             'achats' => $user->achats,
             'likes' => $user->likes
@@ -140,7 +141,7 @@ class AuthController extends Controller {
         return response()->json([
             'status' => "success",
             'message' => "Adherent updated successfully",
-            'adherent' => $user
+            'adherent' => new UserResource($user)
         ], 200);
     }
 
