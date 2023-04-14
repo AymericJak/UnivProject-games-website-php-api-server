@@ -19,7 +19,7 @@ class UserFactory extends Factory {
         $prenom = fake()->firstName();
         $nom = fake()->lastName();
         return [
-            'login' => "?",
+            'login' => $prenom . "." . $nom,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => Hash::make('Password'),
