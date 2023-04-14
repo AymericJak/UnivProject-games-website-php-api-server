@@ -32,6 +32,7 @@ class JeuRequest extends FormRequest
             'categorie' => 'required|string',
             'theme' => 'required|string',
             'editeur' => 'required|string',
+            'url_media' => 'required|string',
         ];
     }
 }
