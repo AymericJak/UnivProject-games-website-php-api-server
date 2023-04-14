@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\JeuRequest;
+use App\Models\Categorie;
+use App\Models\Editeur;
 use App\Models\Jeu;
+use App\Models\Theme;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JeuController extends Controller
 {
-    public function index(JeuRequest $request){
+    public function index(Request $request){
         if (Auth::check()) {
             return $this->indexVisiteur($request);
         }
@@ -119,5 +123,35 @@ class JeuController extends Controller
             $jeu->note = $total / count($commentaires);
         }
         return $jeux->sortByDesc('note')->take(5);
+    }
+
+    public function store(JeuRequest $request){
+        try{
+
+        $jeu = new Jeu();
+        $jeu->nom = $request->nom;
+        $jeu->description = $request->description;
+        $jeu->langue = $request->langue;
+        $jeu->age_min = $request->age_min;
+        $jeu->nombre_joueurs_min = $request->nombre_joueurs_min;
+        $jeu->nombre_joueurs_max = $request->nombre_joueurs_max;
+        $jeu->duree_partie = $request->duree_partie;
+        $jeu->categorie = Categorie::where('nom', $request->categorie)->value('id');
+        $jeu->theme = Theme::where('nom', $request->theme)->value('id');
+        $jeu->editeur = Editeur::where('nom', $request->editeur)->value('id');
+        $jeu->valide = true;
+        $jeu->url_media = 'image/no-image.png';
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Game created successfully',
+            'jeu' => $jeu,
+        ],200);
+        } catch (Exception $e){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Le jeu n\'a pas pu être créé',
+                'errors' => $e->errors(),
+            ]);
+        }
     }
 }
