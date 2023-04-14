@@ -299,7 +299,7 @@ class JeuController extends Controller
 
     public function show(Request $request, $id)
     {
-        if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
+        if (Auth::user()->roles()->pluck('nom')->contains('adherent')) {
 
             $jeu = Jeu::find($id);
             if (!$jeu) {
