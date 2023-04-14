@@ -16,4 +16,13 @@ class JeuController extends Controller
         $jeux = Jeu::inRandomOrder()->take(5)->get();
         return $jeux;
     }
+
+    public function indexAdherent(Request $request){
+        if (Auth::check()) {
+            $jeux = Jeu::where('valide', true)->get();
+            return $jeux;
+        }else {
+            return null;
+        }
+    }
 }
