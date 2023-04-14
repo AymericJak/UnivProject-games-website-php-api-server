@@ -208,9 +208,26 @@ class JeuController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Le jeu n\'a pas pu être créé',
+                'message' => 'L\'achat n\'a pas pu être réalisé',
                 'errors' => $e,
             ], 422);
         }
+    }
+
+    public function destroy($id){
+        $achat = Achat::findOrFail($id);
+        if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium') && Auth::user()->id == $achat->user_id){
+
+            $achat->delete();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Achat successfully deleted'
+            ], 200);
+        }
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized'
+        ], 422);
     }
 }

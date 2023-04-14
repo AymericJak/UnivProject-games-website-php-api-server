@@ -3,29 +3,27 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\EditeurResource;
-use App\Models\Editeur;
-use Exception;
-use http\Env\Response;
+use App\Http\Resources\ThemeResource;
+use App\Models\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use OpenApi\Attributes as OA;
 
-class EditeurController extends Controller
+class ThemeController extends Controller
 {
     #[OA\Get(
-        path: "/api/editeurs",
+        path: "/api/themes",
         operationId: "index",
-        description: "The list of editor's names",
-        tags: ["Editors"],
+        description: "The list of theme's names",
+        tags: ["Themes"],
         responses: [
             new OA\Response(
                 response: 200,
-                description: "The list of editor's names",
+                description: "The list of theme's names",
                 content: new OA\JsonContent(
                     type: "array",
                     items: new OA\Items(properties: [
-                        new OA\Property(property: "editeurs", type: "array"),
+                        new OA\Property(property: "themes", type: "array"),
                     ], type: "object")
                 )
             ),
@@ -33,13 +31,12 @@ class EditeurController extends Controller
     )]
     /**
      * Display a listing of the resource.
-     * @throws Exception
      */
     public function index(): AnonymousResourceCollection
     {
-        $editeursNoms = Editeur::pluck('nom');
-        $editeursCollection = collect(['editeurs' => $editeursNoms]);
-        return EditeurResource::collection($editeursCollection);
+        $themesNoms = Theme::pluck('nom');
+        $themesCollection = collect(['theme' => $themesNoms]);
+        return ThemeResource::collection($themesCollection);
     }
 
     /**
