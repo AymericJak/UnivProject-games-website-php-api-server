@@ -118,7 +118,7 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $user_id) {
         $request->validate([
             'login' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
@@ -128,7 +128,7 @@ class AuthController extends Controller {
             'pseudo' => 'required|string|max:255',
         ]);
 
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($user_id);
         $user->update($request->all());
         return response()->json([
             'status' => "success",
@@ -136,5 +136,21 @@ class AuthController extends Controller {
             'adherent' => $user
         ], 200);
         // TODO Code 422
+    }
+
+    public function updateAvatar(Request $request, $user_id) {
+        $request->validate([
+            'avatar' => 'required|string|max:255',
+        ]);
+        $user = User::findOrFail($user_id);
+        $user->update([
+            "avatar" => $request->avatar,
+        ]);
+        return response()->json([
+            'status' => "success",
+            'message' => "Adherent avatar updated successfully",
+            "url_media" => "url_media_modifie"
+        ], 200);
+        // TODO CODE 422
     }
 }

@@ -25,6 +25,8 @@ Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(functi
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
     Route::get('monProfil', 'monProfil')->name('profil');
+    Route::put('update/{user_id}', 'update')->name('update')->middleware(['auth', 'role:admin']);
+    Route::put('updateAvatar/{user_id}', 'updateAvatar')->name('updateAvatar')->middleware(['auth', 'role:admin']);
 });
 
 Route::get('jeu', [\App\Http\Controllers\Api\JeuController::class, 'index']);
