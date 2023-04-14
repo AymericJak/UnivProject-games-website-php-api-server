@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth;
 class JeuController extends Controller
 {
     public function index(request $request){
+        if (Auth::check()) {
+            return $this->indexAdherent($request);
+        }
+        else{
+            return $this->indexVisiteur($request);
+        }
     }
 
     public function indexVisiteur(Request $request){
@@ -18,11 +24,27 @@ class JeuController extends Controller
     }
 
     public function indexAdherent(Request $request){
-        if (Auth::check()) {
-            $jeux = Jeu::where('valide', true)->get();
-            return $jeux;
-        }else {
-            return null;
-        }
+        $jeux = Jeu::where('valide', true)->get();
+        return $jeux;
+    }
+
+    public function indexFiltrageAgeMin(Request $request){
+        $jeux = Jeu::orderBy('age_min')->get();
+        return $jeux;
+    }
+
+    public function indexFiltrageDuree(Request $request){
+        $jeux = Jeu::orderBy('duree')->get();
+        return $jeux;
+    }
+
+    public function indexFiltrageJoueursMin(Request $request){
+        $jeux = Jeu::orderBy('nombre_joueurs_min')->get();
+        return $jeux;
+    }
+
+    public function indexFiltrageJoueursMax(Request $request){
+        $jeux = Jeu::orderBy('nombre_joueurs_max')->get();
+        return $jeux;
     }
 }

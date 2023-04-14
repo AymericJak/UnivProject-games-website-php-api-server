@@ -19,3 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('jeu', [\App\Http\Controllers\Api\JeuController::class,'index']);
+Route::get('jeu/AgeMin', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageAgeMin']);
+Route::get('jeu/JoueursMax', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageJoueursMax']);
+Route::get('jeu/JoueursMin', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageJoueursMin']);
+Route::get('jeu/Duree', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageDuree']);
