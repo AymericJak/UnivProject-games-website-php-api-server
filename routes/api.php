@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\EditeurController;
+use App\Http\Controllers\Api\ThemeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +40,6 @@ Route::patch('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'edit'
 Route::post('jeu/{id}/achat', [\App\Http\Controllers\Api\JeuController::class, 'achat']);
 
 
-Route::get('editeurs', [EditeurController::class, 'index']);;
+Route::get('editeurs', [EditeurController::class, 'index']);
+
+Route::get('themes', [ThemeController::class, 'index']);
