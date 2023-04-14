@@ -127,26 +127,25 @@ class JeuController extends Controller
 
     public function store(JeuRequest $request){
         try{
-
-        $jeu = new Jeu();
-        $jeu->nom = $request->nom;
-        $jeu->description = $request->description;
-        $jeu->langue = $request->langue;
-        $jeu->age_min = $request->age_min;
-        $jeu->nombre_joueurs_min = $request->nombre_joueurs_min;
-        $jeu->nombre_joueurs_max = $request->nombre_joueurs_max;
-        $jeu->duree_partie = $request->duree_partie;
-        $jeu->categorie_id = Categorie::where('nom', $request->categorie)->value('id');
-        $jeu->theme_id = Theme::where('nom', $request->theme)->value('id');
-        $jeu->editeur_id = Editeur::where('nom', $request->editeur)->value('id');
-        $jeu->valide = true;
-        $jeu->url_media = $request->url_media;
-        $jeu->save();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Game created successfully',
-            'jeu' => $jeu,
-        ],200);
+            $jeu = new Jeu();
+            $jeu->nom = $request->nom;
+            $jeu->description = $request->description;
+            $jeu->langue = $request->langue;
+            $jeu->age_min = $request->age_min;
+            $jeu->nombre_joueurs_min = $request->nombre_joueurs_min;
+            $jeu->nombre_joueurs_max = $request->nombre_joueurs_max;
+            $jeu->duree_partie = $request->duree_partie;
+            $jeu->categorie_id = Categorie::where('nom', $request->categorie)->value('id');
+            $jeu->theme_id = Theme::where('nom', $request->theme)->value('id');
+            $jeu->editeur_id = Editeur::where('nom', $request->editeur)->value('id');
+            $jeu->valide = true;
+            $jeu->url_media = $request->url_media;
+            $jeu->save();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Game created successfully',
+                'jeu' => $jeu,
+            ],200);
         } catch (Exception $e){
             return response()->json([
                 'status' => 'error',
@@ -156,23 +155,16 @@ class JeuController extends Controller
         }
     }
 
-    public function edit(JeuRequest $request, $id){
+    public function edit(Request $request, $id){
         $jeu = Jeu::find($id);
 
         if (!$jeu) {
-            return response()->json(['status' => 'error', 'message' => 'Jeu introuvable.'], 404);
+            return response()->json(['status' => 'error', 'message' => 'Jeu introuvable.'], 422);
         }
 
-        $jeu->nom = $request->nom;
-        $jeu->description = $request->description;
-        $jeu->langue = $request->langue;
-        $jeu->age_min = $request->age_min;
-        $jeu->nombre_joueurs_min = $request->nombre_joueurs_min;
-        $jeu->nombre_joueurs_max = $request->nombre_joueurs_max;
-        $jeu->duree_partie = $request->duree_partie;
-        $jeu->categorie_id = Categorie::where('nom', $request->categorie)->value('id');
-        $jeu->theme_id = Theme::where('nom', $request->theme)->value('id');
-        $jeu->editeur_id = Editeur::where('nom', $request->editeur)->value('id');
+        if (!isset($request->url_media)) {
+            return response()->json(['status' => 'error', 'message' => 'Renseignez un lien.'], 422);
+        }
         $jeu->url_media = $request->url_media;
 
         if ($jeu->save()) {
