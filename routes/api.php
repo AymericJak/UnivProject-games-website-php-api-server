@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EditeurController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,5 @@ Route::get('jeu/FiltrageJoueursMin', [\App\Http\Controllers\Api\JeuController::c
 Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::class,'indexFiltrageJoueursMax']);
 Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class,'indexMostLiked']);
 Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class,'indexBestRated']);
+
+Route::get('editeurs', [EditeurController::class, 'index']);
