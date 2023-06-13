@@ -314,8 +314,14 @@ class JeuController extends Controller
 
             $commentaires = $jeu->commentaires;
 
-            $nbLikes = $jeu->likes->count();
-            $noteMoyenne = count($jeu->likes()->get());
+            if ($jeu->likes){
+                $nbLikes = $jeu->likes->count();
+                $noteMoyenne = count($jeu->likes()->get()) / $nbLikes;
+
+            } else{
+                $nbLikes = 0;
+                $noteMoyenne = 0;
+            }
 
             return response()->
             json([

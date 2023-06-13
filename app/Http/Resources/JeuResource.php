@@ -24,9 +24,9 @@ class JeuResource extends JsonResource
             'nombre_joueurs_max' => $this->nombre_joueurs_max,
             'duree_partie' => $this->duree_partie,
             'valide' => $this->valide,
-            'categorie' => $this->categorie,
-            'theme' => $this->theme,
-            'editeur' => $this->editeur,
+            'categorie' => new CategorieResource($this->categorie),
+            'theme' => new ThemeResource($this->theme),
+            'editeur' => new EditeurResource($this->editeur),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
