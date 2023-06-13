@@ -220,16 +220,9 @@ class AuthController extends Controller {
     }
 
     #[OA\Get( //TODO Paramètre id_user
-        path: "/api/login",
-        operationId: "login",
-        description: "Permet à un adhérent de se connecter",
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(properties: [
-                new OA\Property(property: "email", description: "Email de l'adhérent", type: "string", format: "email"),
-                new OA\Property(property: "password", description: "Mot de passe de l'adhérent", type: "string", format: "password"),
-            ]),
-        ),
+        path: "/api/profil",
+        operationId: "profil",
+        description: "Permet de regarder son profil ou celui d'un autre (en tant qu'admin)",
         tags: ["Utilisateur"],
         responses: [
             new OA\Response(
@@ -275,9 +268,9 @@ class AuthController extends Controller {
     }
 
     #[OA\Put(
-        path: "/api/login",
-        operationId: "login",
-        description: "Permet à un adhérent de se connecter",
+        path: "/api/update", //TODO avec parametre
+        operationId: "update",
+        description: "Permet à un adhérent de modifier son profil ou celui d'un autre en tant qu'admin",
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(properties: [
