@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdherentRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +34,7 @@ class AuthController extends Controller {
         return response()->json([
             'status' => 'success',
             'message' => 'Adherent logged successfully',
-            'adherent' => $user,
+            'adherent' => new UserResource($user),
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
@@ -73,7 +75,7 @@ class AuthController extends Controller {
         return response()->json([
             'status' => 'success',
             'message' => 'Adherent created successfully',
-            'adherent' => $user,
+            'adherent' => new UserResource($user),
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
@@ -92,7 +94,7 @@ class AuthController extends Controller {
     public function refresh() {
         return response()->json([
             'status' => 'success',
-            'user' => Auth::user(),
+            'user' => new UserResource(Auth::user()),
             'authorisation' => [
                 'token' => Auth::refresh(),
                 'type' => 'bearer',
@@ -100,41 +102,67 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function monProfil() {
-        if (!Auth::check()) {
+    public function profil($user_id) {
+        $user = User::findOrFail($user_id);
+        if (!Auth::check() || (Auth::user()->id != $user_id && !Auth::user()->isAdmin())) {
             return response()->json([
                 "status" => "error",
                 "message" => "Unauthorized"
-            ]);
+            ], 403);
         }
-        $user = Auth::user();
+
         return response()->json([
             'status' => 'success',
             "message" => "Successfully profil info",
-            'adherent' => $user,
-            'commentaires' => "TODO",
-            'achats' => "TODO",
-            'likes' => "TODO"
+            'adherent' => new UserResource($user),
+            'commentaires' => $user->commentaires,
+            'achats' => $user->achats,
+            'likes' => $user->likes
         ]);
     }
 
-    public function update(Request $request, $id) {
-        $request->validate([
-            'login' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'pseudo' => 'required|string|max:255',
-        ]);
+    public function update(AdherentRequest $request, $user_id) {
+        if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthorized"
+            ], 422);
+        }
 
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($user_id);
+
+        if ($request->has('password')) {
+            $request->merge([
+                'password' => Hash::make($request->input('password'))
+            ]);
+        }
+
         $user->update($request->all());
         return response()->json([
             'status' => "success",
             'message' => "Adherent updated successfully",
-            'adherent' => $user
+            'adherent' => new UserResource($user)
         ], 200);
-        // TODO Code 422
+    }
+
+    public function updateAvatar(Request $request, $user_id) {
+        if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Unauthorized"
+            ], 422);
+        }
+        $request->validate([
+            'avatar' => 'required|string',
+        ]);
+        $user = User::findOrFail($user_id);
+        $user->update([
+            "avatar" => $request->avatar,
+        ]);
+        return response()->json([
+            'status' => "success",
+            'message' => "Adherent avatar updated successfully",
+            "avatar" => $request->avatar
+        ], 200);
     }
 }
