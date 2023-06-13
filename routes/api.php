@@ -47,6 +47,7 @@ Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class, 'store'])->m
 Route::delete('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'destroy'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
 Route::get('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'show'])->middleware(['auth','role:adherent','role:adherent-premium','role:administrateur']);;;
 
+Route::get('commentaires', [\App\Http\Controllers\Api\CommentaireController::class, 'index'])->middleware(['auth']);
 Route::post('commentaire', [\App\Http\Controllers\Api\CommentaireController::class,'store'])->middleware(['auth', 'role:adherent','role:visiteur','role:adherent-premium','role:commentaire-moderateur','role:administrateur']);
 Route::delete('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'destroy'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
 Route::patch('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'update'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
