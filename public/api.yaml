@@ -1,0 +1,53 @@
+openapi: 3.0.0
+paths:
+  /api/categories:
+    get:
+      tags:
+        - Categories
+      summary: 'Display a listing of the resource.'
+      description: 'The list of names of categories'
+      operationId: index
+      responses:
+        '200':
+          description: 'The list of names of categories'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { categories: { type: array } }
+                  type: object
+  /api/editeurs:
+    get:
+      tags:
+        - Editors
+      summary: 'Display a listing of the resource.'
+      description: "The list of editor's names"
+      operationId: index
+      responses:
+        '200':
+          description: "The list of editor's names"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { editeurs: { type: array } }
+                  type: object
+  /api/themes:
+    get:
+      tags:
+        - Themes
+      summary: 'Display a listing of the resource.'
+      description: "The list of theme's names"
+      operationId: index
+      responses:
+        '200':
+          description: "The list of theme's names"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { themes: { type: array } }
+                  type: object

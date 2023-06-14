@@ -24,23 +24,35 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('register', 'register');
-    Route::post('logout', 'logout');
+    Route::post('logout', 'logout')->middleware(['auth:api']);
     Route::post('refresh', 'refresh');
-    Route::get('monProfil', 'monProfil')->name('profil');
+    Route::get('profil/{user_id}', 'profil')->name('profil');
+    Route::put('update/{user_id}', 'update')->name('update')->middleware(['auth']);
+    Route::put('updateAvatar/{user_id}', 'updateAvatar')->name('updateAvatar')->middleware(['auth']);
 });
 
 Route::get('jeu', [\App\Http\Controllers\Api\JeuController::class, 'index']);
-Route::get('jeu/FiltrageAgeMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageAgeMin']);
-Route::get('jeu/FiltrageDuree', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageDuree']);
-Route::get('jeu/FiltrageJoueursMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMin']);
-Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMax']);
-Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class, 'indexMostLiked']);
-Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class, 'indexBestRated']);
-Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class, 'store']);
-Route::patch('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'edit']);
-Route::post('jeu/{id}/achat', [\App\Http\Controllers\Api\JeuController::class, 'achat']);
-Route::delete('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'destroy']);
 
+#Petit bonus
+//Route::get('jeu/FiltrageAgeMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageAgeMin']);
+//Route::get('jeu/FiltrageDuree', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageDuree']);
+//Route::get('jeu/FiltrageJoueursMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMin']);
+//Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMax']);
+//Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class, 'indexMostLiked']);
+//Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class, 'indexBestRated']);
+
+Route::patch('jeu/{id}/edit', [\App\Http\Controllers\Api\JeuController::class, 'edit'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
+Route::patch('jeu/{id}/editUrl', [\App\Http\Controllers\Api\JeuController::class, 'edit_url'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
+
+Route::post('jeu/{id}/achat', [\App\Http\Controllers\Api\JeuController::class, 'achat'])->middleware(['auth','role:adherent-premium','role:administrateur']);
+Route::post('jeu', [\App\Http\Controllers\Api\JeuController::class, 'store'])->middleware(['auth','role:adherent-premium','role:administrateur']);
+Route::delete('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'destroy'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
+Route::get('jeu/{id}', [\App\Http\Controllers\Api\JeuController::class, 'show'])->middleware(['auth','role:adherent','role:adherent-premium','role:administrateur']);;;
+
+Route::get('commentaires', [\App\Http\Controllers\Api\CommentaireController::class, 'index'])->middleware(['auth']);
+Route::post('commentaire', [\App\Http\Controllers\Api\CommentaireController::class,'store'])->middleware(['auth', 'role:adherent','role:visiteur','role:adherent-premium','role:commentaire-moderateur','role:administrateur']);
+Route::delete('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'destroy'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
+Route::patch('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'update'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
 
 Route::get('editeurs', [EditeurController::class, 'index']);
 
