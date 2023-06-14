@@ -49,7 +49,7 @@ class LikeController extends Controller
             ->first();
 
         if ($like) {
-            return $this->destroy($like);
+            return $this->destroy($user_id, $id);
         } else {
             return $this->create($id);
         }
@@ -72,9 +72,12 @@ class LikeController extends Controller
     }
 
 
-    public function destroy(Like $like)
+    public function destroy($user_id, $id)
     {
-        $like->delete();
+        Like::where('user_id', $user_id)
+            ->where('jeu_id', $id)
+        ->delete();
+
         return response()->json([
             'status' => 'success',
             'message' => 'Like supprimé avec succès !',
