@@ -28,30 +28,48 @@ class LikeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function update(Request $request,string $jeu_id)
     {
-        if (Gate::denies('store-commentaire')) {
+        if (Gate::denies('update-like')) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Vous n\'êtes pas autorisé à ajouter un like !'
             ], 403);
         }
-        $like = new Like();
-        $like->like = $request->like;
-        $like->user_id = auth()->user()->id;
-        $like->jeu_id = $request->jeu_id;
-        $like->save();
-        if ($like) {
+        $user_id = auth()->user()->id;
+        $like = Like::where('jeu_id', $jeu_id)
+            ->where('user_id', $user_id)
+            ->firstOrFail();
+        if($like){
+            if (Gate::denies('delete-like', $like)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Vous n\'êtes pas autorisé à supprimer ce like !'
+                ], 403);
+            }
+            $like->delete();
             return response()->json([
-                "status" => "success",
-                'message' => "Like created successfully !",
-                'like' => $like
+                'status' => 'success',
+                'message' => "Like successfully deleted",
             ], 200);
-        } else {
-            return response()->json([
-                "status" => "error",
-                'message' => "Erreur lors de la création du commentaire !",
-            ], 422);
+        }else {
+            $like = new Like();
+            $like->like = $request->like;
+            $like->user_id = auth()->user()->id;
+            $like->jeu_id = $jeu_id;
+            $like->save();
+            if ($like) {
+                return response()->json([
+                    "status" => "success",
+                    'message' => "Like created successfully !",
+                    'like' => $like
+                ], 200);
+            } else {
+                return response()->json([
+                    "status" => "error",
+                    'message' => "Erreur lors de la création du commentaire !",
+                ], 422);
+            }
         }
     }
 
@@ -71,13 +89,6 @@ class LikeController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
 
     public function destroy(string $jeu_id)
     {
