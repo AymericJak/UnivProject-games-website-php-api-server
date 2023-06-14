@@ -313,6 +313,7 @@ class JeuController extends Controller {
                 'achats' => $achats,
                 'commentaires' => $commentaires,
                 'jeu' => new JeuResource($jeu),
+                'likes' => $jeu->likes,
                 'nb_likes' => $nbLikes,
                 'note_moyenne' => $noteMoyenne
             ], 200);

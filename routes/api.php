@@ -55,8 +55,8 @@ Route::post('commentaire', [\App\Http\Controllers\Api\CommentaireController::cla
 Route::delete('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'destroy'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
 Route::patch('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'update'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
 
-Route::delete('/jeu/{id}/like', [\App\Http\Controllers\Api\LikeController::class,'update'])->middleware(['auth', 'role:adherent']);
-Route::post('/jeu/{id}/like', [\App\Http\Controllers\Api\LikeController::class,'update'])->middleware(['auth', 'role:adherent']);
+Route::delete('/jeu/{id}/like', [\App\Http\Controllers\Api\LikeController::class,'destroy'])->middleware(['auth', 'role:adherent','role:adherent-premium','role:commentaire-moderateur','role:administrateur']);
+Route::post('/jeu/{id}/like', [\App\Http\Controllers\Api\LikeController::class,'update'])->middleware(['auth', 'role:adherent','role:adherent-premium','role:commentaire-moderateur','role:administrateur']);
 
 
 Route::get('editeurs', [EditeurController::class, 'index']);

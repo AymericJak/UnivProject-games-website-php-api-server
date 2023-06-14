@@ -20,56 +20,38 @@ class LikeController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($id)
     {
-        //
+        $like = new Like();
+        $like->user_id = auth()->user()->id;
+        $like->jeu_id = $id;
+        $like->save();
+
+        if ($like) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Like créé avec succès !',
+                'like' => $like
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erreur lors de la création du like !',
+            ], 422);
+        }
     }
 
     public function update(Request $request, string $id)
     {
-        if (Gate::denies('update-like')) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Vous n\'êtes pas autorisé à ajouter un like !'
-            ], 403);
-        }
-
         $user_id = auth()->user()->id;
         $like = Like::where('jeu_id', $id)
             ->where('user_id', $user_id)
             ->first();
 
         if ($like) {
-            if (Gate::denies('delete-like', $like)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Vous n\'êtes pas autorisé à supprimer ce like !'
-                ], 403);
-            }
-            $like->delete();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Like supprimé avec succès !',
-            ], 200);
+            return $this->destroy($like);
         } else {
-            $like = new Like();
-            $like->like = $request->like;
-            $like->user_id = auth()->user()->id;
-            $like->jeu_id = $id;
-            $like->save();
-
-            if ($like) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Like créé avec succès !',
-                    'like' => $like
-                ], 200);
-            } else {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Erreur lors de la création du like !',
-                ], 422);
-            }
+            return $this->create($id);
         }
     }
 
@@ -90,8 +72,12 @@ class LikeController extends Controller
     }
 
 
-    public function destroy(string $jeu_id)
+    public function destroy(Like $like)
     {
-
+        $like->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Like supprimé avec succès !',
+        ], 200);
     }
 }
