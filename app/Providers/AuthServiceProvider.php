@@ -35,7 +35,7 @@ class AuthServiceProvider extends ServiceProvider
                 $user->roles()->pluck('id')->contains(3) ||
                 $user->roles()->pluck('id')->contains(4) ;
         });
-        Gate::define('update-like', function ($user,){
+        Gate::define('update-like', function ($user){
             return $user->roles()->pluck('id')->contains(1)||
                 $user->roles()->pluck('id')->contains(2) ||
                 $user->roles()->pluck('id')->contains(3) ||

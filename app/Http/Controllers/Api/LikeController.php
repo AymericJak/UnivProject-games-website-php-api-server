@@ -25,10 +25,7 @@ class LikeController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function update(Request $request,string $jeu_id)
+    public function update(Request $request, string $id)
     {
         if (Gate::denies('update-like')) {
             return response()->json([
@@ -36,11 +33,13 @@ class LikeController extends Controller
                 'message' => 'Vous n\'êtes pas autorisé à ajouter un like !'
             ], 403);
         }
+
         $user_id = auth()->user()->id;
-        $like = Like::where('jeu_id', $jeu_id)
+        $like = Like::where('jeu_id', $id)
             ->where('user_id', $user_id)
-            ->firstOrFail();
-        if($like){
+            ->first();
+
+        if ($like) {
             if (Gate::denies('delete-like', $like)) {
                 return response()->json([
                     'status' => 'error',
@@ -50,24 +49,25 @@ class LikeController extends Controller
             $like->delete();
             return response()->json([
                 'status' => 'success',
-                'message' => "Like successfully deleted",
+                'message' => 'Like supprimé avec succès !',
             ], 200);
-        }else {
+        } else {
             $like = new Like();
             $like->like = $request->like;
             $like->user_id = auth()->user()->id;
-            $like->jeu_id = $jeu_id;
+            $like->jeu_id = $id;
             $like->save();
+
             if ($like) {
                 return response()->json([
-                    "status" => "success",
-                    'message' => "Like created successfully !",
+                    'status' => 'success',
+                    'message' => 'Like créé avec succès !',
                     'like' => $like
                 ], 200);
             } else {
                 return response()->json([
-                    "status" => "error",
-                    'message' => "Erreur lors de la création du commentaire !",
+                    'status' => 'error',
+                    'message' => 'Erreur lors de la création du like !',
                 ], 422);
             }
         }
