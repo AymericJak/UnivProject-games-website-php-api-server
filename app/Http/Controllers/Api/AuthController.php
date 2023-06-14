@@ -62,7 +62,7 @@ class AuthController extends Controller {
             'pseudo' => $request->pseudo,
             'avatar' => 'avatarParDefaut.png'
         ]);
-        
+
         $credentials = $request->only('email', 'password');
 
         $token = Auth::attempt($credentials);
@@ -104,7 +104,9 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function profil($user_id) {
+    public function profil($user_id = 0) {
+        if ($user_id === 0)
+            $user_id = Auth::user()->id;
         $user = User::findOrFail($user_id);
         if (!Auth::check() || (Auth::user()->id != $user_id && !Auth::user()->isAdmin())) {
             return response()->json([

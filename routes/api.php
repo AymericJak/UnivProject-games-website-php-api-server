@@ -26,6 +26,7 @@ Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(functi
     Route::post('register', 'register')->name('register');
     Route::post('logout', 'logout')->middleware(['auth:api'])->name('logout');
     Route::post('refresh', 'refresh')->name('refresh');
+    Route::get('profil', 'profil')->name('profil-your');
     Route::get('profil/{user_id}', 'profil')->name('profil');
     Route::put('update/{user_id}', 'update')->name('update')->middleware(['auth']);
     Route::put('updateAvatar/{user_id}', 'updateAvatar')->name('updateAvatar')->middleware(['auth']);
