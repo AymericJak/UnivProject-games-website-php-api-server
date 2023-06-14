@@ -65,9 +65,13 @@ class JeuController extends Controller {
             }
 
             $jeux = $query->get();
+            $listeJeux = [];
+            foreach ($jeux as $jeu) {
+                $listeJeux[] = new JeuResource($jeu);
+            }
             return response()->json([
                 'status' => true,
-                'jeux' => $jeux
+                'jeux' => $listeJeux
             ], 200);
         }
         return response()->json([
