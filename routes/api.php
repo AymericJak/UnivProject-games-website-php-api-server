@@ -55,6 +55,9 @@ Route::post('commentaire', [\App\Http\Controllers\Api\CommentaireController::cla
 Route::delete('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'destroy'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
 Route::patch('/commentaires/{id}', [\App\Http\Controllers\Api\CommentaireController::class,'update'])->middleware(['auth','role:administrateur','role:commentaire-moderateur']);
 
+Route::delete('/like/{id}', [\App\Http\Controllers\Api\LikeController::class,'update'])->middleware(['auth', 'role:adherent']);
+
+
 Route::get('editeurs', [EditeurController::class, 'index']);
 
 Route::get('themes', [ThemeController::class, 'index']);
