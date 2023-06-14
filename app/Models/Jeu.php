@@ -26,7 +26,7 @@ class Jeu extends Model
     }
 
     public function commentaires(){
-        return $this->hasOne(Commentaire::class,'id','commentaire_id');
+        return $this->hasMany(Commentaire::class,'id','commentaire_id');
 
     }
 
