@@ -31,6 +31,6 @@ class Jeu extends Model
     }
 
     public function likes(){
-        return $this->hasOne(Like::class,'jeu_id','like_id');
+        return $this->hasMany(Like::class,'id','jeu_id');
     }
 }
