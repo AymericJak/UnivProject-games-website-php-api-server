@@ -78,17 +78,27 @@ class JeuController extends Controller {
 
     public function indexVisiteur(Request $request) {
         $jeux = Jeu::inRandomOrder()->take(5)->get();
+        $listeJeux = [];
+        foreach ($jeux as $jeu) {
+            $listeJeux[] = new JeuResource($jeu);
+        }
+
         return response()->json([
             'status' => true,
-            'jeux' => $jeux
+            'jeux' => $listeJeux
         ], 200);
     }
 
     public function indexAdherent(Request $request) {
         $jeux = Jeu::where('valide', true)->get();
+        $listeJeux = [];
+        foreach ($jeux as $jeu) {
+            $listeJeux[] = new JeuResource($jeu);
+        }
+
         return response()->json([
             'status' => true,
-            'jeux' => $jeux
+            'jeux' => $listeJeux
         ], 200);
     }
 
