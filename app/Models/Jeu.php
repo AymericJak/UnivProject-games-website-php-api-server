@@ -29,6 +29,6 @@ class Jeu extends Model {
     }
 
     public function likes() {
-        return $this->hasMany(Like::class, 'id', 'jeu_id');
+        return $this->hasMany(Like::class);
     }
 }
