@@ -56,21 +56,23 @@ class AuthController extends Controller {
             'login' => $request->login,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'valide' => false,
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'pseudo' => $request->pseudo,
             'avatar' => 'avatarParDefaut.png'
         ]);
-        Auth::login($user);
-        $credentials = $user->only('email', 'password');
-        $token = Auth::attempt($credentials); // boolean;
+        
+        $credentials = $request->only('email', 'password');
 
+        $token = Auth::attempt($credentials);
         if (!$token) {
             return response()->json([
-                'status' => 'Error',
-                'message' => 'TODO : AFFICHER LES ERREURS',
-            ], 422);
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], 401);
         }
+
 
         return response()->json([
             'status' => 'success',
