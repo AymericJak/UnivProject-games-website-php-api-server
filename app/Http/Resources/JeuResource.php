@@ -15,6 +15,7 @@ class JeuResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'nom' => $this->nom,
             'description' => $this->description,
             'langue' => $this->langue,
