@@ -92,24 +92,6 @@ class LikeController extends Controller
 
     public function destroy(string $jeu_id)
     {
-        try {
-            $user_id = auth()->user()->id;
-            $like = Like::where('jeu_id', $jeu_id)
-                ->where('user_id', $user_id)
-                ->firstOrFail();
-            if (Gate::denies('delete-like', $like)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Vous n\'êtes pas autorisé à supprimer ce like !'
-                ], 403);
-            }
-            $like->delete();
-            return response()->json([
-                'status' => 'success',
-                'message' => "Like successfully deleted",
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'comment not found!'], 422);
-        }
+
     }
 }
