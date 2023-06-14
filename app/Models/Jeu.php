@@ -24,11 +24,11 @@ class Jeu extends Model {
         return $this->hasMany(Commentaire::class);
     }
 
-    public function likes() {
-        return $this->hasOne(Like::class, 'jeu_id', 'like_id');
-    }
-
     public function achats() {
         return $this->hasMany(Achat::class);
+    }
+
+    public function likes() {
+        return $this->hasMany(Like::class, 'id', 'jeu_id');
     }
 }
