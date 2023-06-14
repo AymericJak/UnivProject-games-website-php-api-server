@@ -41,7 +41,8 @@ class AuthServiceProvider extends ServiceProvider
                 $user->roles()->pluck('id')->contains(2) ||
                 $user->roles()->pluck('id')->contains(3) ||
                 $user->roles()->pluck('id')->contains(4) ||
-                $user->roles()->pluck('id')->contains(5);
+                $user->roles()->pluck('id')->contains(5) ||
+                $user->roles()->pluck('nom')->contains('administrateur');
         });
     }
 }
