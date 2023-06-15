@@ -10,6 +10,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use OpenApi\Attributes as OA;
+use PhpParser\Node\Scalar\String_;
 
 class CommentaireController extends Controller
 {
@@ -60,7 +61,7 @@ class CommentaireController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CommentaireRequest $request)
+    public function store(CommentaireRequest $request,String $id)
     {
         if (Gate::denies('store-commentaire')) {
             return response()->json([
@@ -69,8 +70,7 @@ class CommentaireController extends Controller
             ], 403);
         }
         $commentaire = new Commentaire();
-        $commentaire->commentaire = $request->commentaire;
-        $commentaire->date_com = new dateTime();
+        $commentaire->date_com = $request->date_com;
         $commentaire->note = $request->note;
         if($request->etat){
             $commentaire->etat = $request->etat;
@@ -78,7 +78,7 @@ class CommentaireController extends Controller
             $commentaire->etat = 'public';
         }
         $commentaire->user_id = auth()->user()->id;
-        $commentaire->jeu_id = $request->jeu_id;
+        $commentaire->jeu_id = $id;
         $commentaire->save();
         if($commentaire) {
             return response()->json([
