@@ -313,12 +313,11 @@ class JeuController extends Controller {
 
             if ($jeu->likes) {
                 $nbLikes = $jeu->likes->count();
-                $noteMoyenne = count($jeu->likes()->get()) / $nbLikes;
-
             } else {
                 $nbLikes = 0;
-                $noteMoyenne = 0;
             }
+
+            $noteMoyenne = round($jeu->commentaires()->average('note'), 2);
 
             return response()->
             json([
