@@ -136,7 +136,7 @@ class AuthController extends Controller {
             $jeu = Jeu::findOrFail($like->jeu_id);
             $likes[] = [
                 'jeu_id' => $like->jeu_id,
-                'jen_nom' => $jeu->nom,
+                'jeu_nom' => $jeu->nom,
             ];
         }
         return response()->json([
