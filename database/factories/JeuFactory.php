@@ -27,7 +27,7 @@ class JeuFactory extends Factory
             'nom' => fake()->unique()->word(),
             'description' => fake()->unique()->paragraph(),
             'langue' => fake()->languageCode(),
-            'url_media' => 'rien/pour/linstant/jsp.png',
+            'url_media' => 'no-image.png',
             'age_min' => fake()->randomElement([8,12,16,18]),
             'nombre_joueurs_min' => fake()->numberBetween(1,20),
             'nombre_joueurs_max' => fake()->numberBetween(1,20),
