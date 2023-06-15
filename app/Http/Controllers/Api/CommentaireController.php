@@ -10,7 +10,6 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use OpenApi\Attributes as OA;
-use PhpParser\Node\Scalar\String_;
 
 class CommentaireController extends Controller
 {
@@ -70,6 +69,7 @@ class CommentaireController extends Controller
             ], 403);
         }
         $commentaire = new Commentaire();
+        $commentaire->commentaire = $request->commentaire;
         $commentaire->date_com = $request->date_com;
         $commentaire->note = $request->note;
         if($request->etat){
