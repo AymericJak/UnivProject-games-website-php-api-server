@@ -318,6 +318,7 @@ class JeuController extends Controller {
             }
 
             $noteMoyenne = round($jeu->commentaires()->average('note'), 2);
+            $prixMoyen = round($jeu->achats()->average('prix'), 2);
 
             return response()->
             json([
@@ -328,7 +329,8 @@ class JeuController extends Controller {
                 'jeu' => new JeuResource($jeu),
                 'likes' => $jeu->likes,
                 'nb_likes' => $nbLikes,
-                'note_moyenne' => $noteMoyenne
+                'note_moyenne' => $noteMoyenne,
+                'prix_moyen' => $prixMoyen
             ], 200);
         }
         return $this->throwUnauthorized();
