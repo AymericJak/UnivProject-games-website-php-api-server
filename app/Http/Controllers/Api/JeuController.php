@@ -150,7 +150,7 @@ class JeuController extends Controller {
     public function store(JeuRequest $request) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
             try {
-                $jeu = new Jeu();
+                $jeu = Jeu::find($request->id);
                 $jeu->nom = $request->nom;
                 $jeu->description = $request->description;
                 $jeu->langue = $request->langue;
@@ -166,13 +166,13 @@ class JeuController extends Controller {
                 $jeu->save();
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Game created successfully',
+                    'message' => 'Game updated successfully',
                     'jeu' => new JeuResource($jeu),
                 ], 200);
             } catch (Exception $e) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Le jeu n\'a pas pu être créé',
+                    'message' => 'Le jeu n\'a pas pu être update',
                     'errors' => $e,
                 ], 422);
             }
@@ -311,7 +311,7 @@ class JeuController extends Controller {
 
             $commentaires = $jeu->commentaires;
 
-            if ($jeu->likes) {
+            if ($jeu->likes && $jeu->likes->count()>= 1) {
                 $nbLikes = $jeu->likes->count();
                 $noteMoyenne = count($jeu->likes()->get()) / $nbLikes;
 
