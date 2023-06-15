@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdherentRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Jeu;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use function Sodium\add;
 
 class AuthController extends Controller {
 
@@ -115,12 +117,27 @@ class AuthController extends Controller {
             ], 403);
         }
 
+        $achats = [];
+        foreach ($user->achats as $achat) {
+            $jeu = Jeu::findOrFail($achat->jeu_id);
+            $achats[] = [
+                'user_id' => $achat->user_id,
+                'jeu_id' => $achat->jeu_id,
+                'jeu_nom' => $jeu->nom,
+                'date_achat' => $achat->date_achat,
+                'lieu_achat' => $achat->lieu_achat,
+                'prix' => $achat->prix,
+                'created_at' => $achat->created_at,
+                'updated_at' => $achat->updated_at,
+            ];
+        }
+
         return response()->json([
             'status' => 'success',
             "message" => "Successfully profil info",
             'adherent' => new UserResource($user),
             'commentaires' => $user->commentaires,
-            'achats' => $user->achats,
+            'achats' => $achats,
             'likes' => $user->likes
         ]);
     }
