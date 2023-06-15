@@ -187,7 +187,7 @@ class JeuController extends Controller {
     public function edit(JeuRequest $request) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
             try {
-                $jeu = new Jeu();
+                $jeu = Jeu::find($request->id);
                 $jeu->nom = $request->nom;
                 $jeu->description = $request->description;
                 $jeu->langue = $request->langue;
