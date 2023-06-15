@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdherentRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Jeu;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use function Sodium\add;
 
 class AuthController extends Controller {
 
@@ -114,18 +117,45 @@ class AuthController extends Controller {
                 "message" => "Unauthorized"
             ], 403);
         }
-
+        $achats = [];
+        foreach ($user->achats as $achat) {
+            $jeu = Jeu::findOrFail($achat->jeu_id);
+            $achats[] = [
+                'user_id' => $achat->user_id,
+                'jeu_id' => $achat->jeu_id,
+                'jeu_nom' => $jeu->nom,
+                'date_achat' => $achat->date_achat,
+                'lieu_achat' => $achat->lieu_achat,
+                'prix' => $achat->prix,
+                'created_at' => $achat->created_at,
+                'updated_at' => $achat->updated_at,
+            ];
+        }
+        $likes = [];
+        foreach ($user->likes as $like) {
+            $jeu = Jeu::findOrFail($like->jeu_id);
+            $likes[] = [
+                'jeu_id' => $like->jeu_id,
+                'jeu_nom' => $jeu->nom,
+            ];
+        }
         return response()->json([
             'status' => 'success',
             "message" => "Successfully profil info",
             'adherent' => new UserResource($user),
             'commentaires' => $user->commentaires,
-            'achats' => $user->achats,
-            'likes' => $user->likes
+            'achats' => $achats,
+            'likes' => $likes,
         ]);
     }
 
-    public function update(AdherentRequest $request, $user_id) {
+    /**
+     * @param AdherentRequest $request
+     * @param $user_id
+     * @return JsonResponse
+     */
+    public function update(AdherentRequest $request, $user_id): JsonResponse
+    {
         if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
             return response()->json([
                 "status" => "error",
@@ -149,7 +179,13 @@ class AuthController extends Controller {
         ], 200);
     }
 
-    public function updateAvatar(Request $request, $user_id) {
+    /**
+     * @param Request $request
+     * @param $user_id
+     * @return JsonResponse
+     */
+    public function updateAvatar(Request $request, $user_id): JsonResponse
+    {
         if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
             return response()->json([
                 "status" => "error",

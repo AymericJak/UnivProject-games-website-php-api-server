@@ -187,7 +187,7 @@ class JeuController extends Controller {
     public function edit(JeuRequest $request) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
             try {
-                $jeu = new Jeu();
+                $jeu = Jeu::find($request->id);
                 $jeu->nom = $request->nom;
                 $jeu->description = $request->description;
                 $jeu->langue = $request->langue;
@@ -313,12 +313,11 @@ class JeuController extends Controller {
 
             if ($jeu->likes) {
                 $nbLikes = $jeu->likes->count();
-                $noteMoyenne = count($jeu->likes()->get()) / $nbLikes;
-
             } else {
                 $nbLikes = 0;
-                $noteMoyenne = 0;
             }
+
+            $noteMoyenne = round($jeu->commentaires()->average('note'), 2);
 
             return response()->
             json([
