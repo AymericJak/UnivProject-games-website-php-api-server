@@ -35,12 +35,12 @@ Route::controller(\App\Http\Controllers\Api\AuthController::class)->group(functi
 Route::get('jeu', [\App\Http\Controllers\Api\JeuController::class, 'index']);
 
 #Petit bonus
-//Route::get('jeu/FiltrageAgeMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageAgeMin']);
-//Route::get('jeu/FiltrageDuree', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageDuree']);
-//Route::get('jeu/FiltrageJoueursMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMin']);
-//Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMax']);
-//Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class, 'indexMostLiked']);
-//Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class, 'indexBestRated']);
+Route::get('jeu/FiltrageAgeMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageAgeMin']);
+Route::get('jeu/FiltrageDuree', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageDuree']);
+Route::get('jeu/FiltrageJoueursMin', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMin']);
+Route::get('jeu/FiltrageJoueursMax', [\App\Http\Controllers\Api\JeuController::class, 'indexFiltrageJoueursMax']);
+Route::get('jeu/FiltrageMostLiked', [\App\Http\Controllers\Api\JeuController::class, 'indexMostLiked']);
+Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class, 'indexBestRated']);
 
 Route::patch('jeu/{id}/edit', [\App\Http\Controllers\Api\JeuController::class, 'edit'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
 Route::patch('jeu/{id}/editUrl', [\App\Http\Controllers\Api\JeuController::class, 'edit_url'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
