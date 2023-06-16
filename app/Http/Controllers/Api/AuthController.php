@@ -7,9 +7,11 @@ use App\Http\Requests\AdherentRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Jeu;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use function Sodium\add;
 
@@ -134,6 +136,14 @@ class AuthController extends Controller {
         if ($user_id === 0)
             $user_id = Auth::user()->id;
         $user = User::findOrFail($user_id);
+
+        try{
+            $filePath = storage_path("app/images/oeuvres/$user->avatar");
+            $image_encoded = base64_encode(File::get($filePath));
+        }catch (Exception $e){
+            $filePath = storage_path("app/images/oeuvres/no-image.png");
+            $image_encoded = base64_encode(File::get($filePath));
+        }
         if (!Auth::check() || (Auth::user()->id != $user_id && !Auth::user()->isAdmin())) {
             return response()->json([
                 "status" => "error",
