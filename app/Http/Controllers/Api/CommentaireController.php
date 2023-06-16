@@ -206,7 +206,7 @@ class CommentaireController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
         try {
             $commentaire = Commentaire::findOrFail($id);
