@@ -225,17 +225,27 @@ class AuthController extends Controller {
                 "message" => "Unauthorized"
             ], 422);
         }
-        $request->validate([
-            'avatar' => 'required|string',
-        ]);
+
         $user = User::findOrFail($user_id);
-        $user->update([
-            "avatar" => $request->avatar,
-        ]);
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $file = $request->file('image');
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Aucun fichier.'], 422);
+        }
+
+
+        $nom = $request->url_media;
+        $now = time();
+        $nom = sprintf("%s_%d.%s", $nom, $now, $file->extension());
+        $file->storeAs('images/oeuvres/', $nom);
+
+        $user->avatar = $nom;
+        $user->save();
+
         return response()->json([
             'status' => "success",
-            'message' => "Adherent avatar updated successfully",
-            "avatar" => $request->avatar
+            'message' => "Adherent avatar updated successfully"
         ], 200);
     }
 }
