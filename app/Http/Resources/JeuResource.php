@@ -17,7 +17,7 @@ class JeuResource extends JsonResource
     public function toArray(Request $request): array
     {
         try {
-            $filePath = storage_path("app/images/oeuvres/{$this->avatar}");
+            $filePath = storage_path("app/images/oeuvres/{$this->url_media}");
             $image_encoded = base64_encode(File::get($filePath));
         } catch (Exception $e) {
             $filePath = storage_path("app/images/oeuvres/no-image.png");
