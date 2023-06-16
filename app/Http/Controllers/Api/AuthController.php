@@ -141,7 +141,7 @@ class AuthController extends Controller {
             ], 403);
         }
         $achats = [];
-        foreach ($user->achats() as $achat) {
+        foreach ($user->achats as $achat) {
             $jeu = Jeu::findOrFail($achat->jeu_id);
             $achats[] = [
                 'user_id' => $achat->user_id,
