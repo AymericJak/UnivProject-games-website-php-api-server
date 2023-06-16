@@ -24,6 +24,8 @@ class User extends Authenticatable implements JWTSubject {
         "nom",
         "prenom",
         "pseudo",
+        "valide",
+        "avatar"
     ];
 
     /**
@@ -70,7 +72,7 @@ class User extends Authenticatable implements JWTSubject {
     }
 
     public function likes() {
-        return $this->belongsToMany(Jeu::class, 'likes', 'user_id', 'jeu_id');
+        return $this->hasMany(Like::class);
     }
 
 

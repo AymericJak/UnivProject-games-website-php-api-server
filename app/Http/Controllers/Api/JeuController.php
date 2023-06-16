@@ -14,13 +14,10 @@ use App\Models\Theme;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use OpenApi\Attributes as OA;
 
-class JeuController extends Controller
-{
+class JeuController extends Controller {
 
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         if (!Auth::check()) {
             return $this->indexVisiteur($request);
         } elseif (Auth::user()->roles()->pluck('nom')->contains('adherent')) {
@@ -68,9 +65,13 @@ class JeuController extends Controller
             }
 
             $jeux = $query->get();
+            $listeJeux = [];
+            foreach ($jeux as $jeu) {
+                $listeJeux[] = new JeuResource($jeu);
+            }
             return response()->json([
                 'status' => true,
-                'Jeux' => $jeux->pluck('nom')->toArray()
+                'jeux' => $listeJeux
             ], 200);
         }
         return response()->json([
@@ -79,50 +80,53 @@ class JeuController extends Controller
         ], 422);
     }
 
-    public function indexVisiteur(Request $request)
-    {
+    public function indexVisiteur(Request $request) {
         $jeux = Jeu::inRandomOrder()->take(5)->get();
+        $listeJeux = [];
+        foreach ($jeux as $jeu) {
+            $listeJeux[] = new JeuResource($jeu);
+        }
+
         return response()->json([
             'status' => true,
-            'Jeux' => $jeux->pluck('nom')->toArray()
+            'jeux' => $listeJeux
         ], 200);
     }
 
-    public function indexAdherent(Request $request)
-    {
+    public function indexAdherent(Request $request) {
         $jeux = Jeu::where('valide', true)->get();
+        $listeJeux = [];
+        foreach ($jeux as $jeu) {
+            $listeJeux[] = new JeuResource($jeu);
+        }
+
         return response()->json([
             'status' => true,
-            'Jeux' => $jeux->pluck('nom')->toArray()
+            'jeux' => $listeJeux
         ], 200);
     }
 
-    public function indexFiltrageAgeMin(Request $request)
-    {
+    public function indexFiltrageAgeMin(Request $request) {
         $jeux = Jeu::orderBy('age_min')->get();
         return $jeux;
     }
 
-    public function indexFiltrageDuree(Request $request)
-    {
+    public function indexFiltrageDuree(Request $request) {
         $jeux = Jeu::orderBy('duree_partie')->get();
         return $jeux;
     }
 
-    public function indexFiltrageJoueursMin(Request $request)
-    {
+    public function indexFiltrageJoueursMin(Request $request) {
         $jeux = Jeu::orderBy('nombre_joueurs_min')->get();
         return $jeux;
     }
 
-    public function indexFiltrageJoueursMax(Request $request)
-    {
+    public function indexFiltrageJoueursMax(Request $request) {
         $jeux = Jeu::orderBy('nombre_joueurs_max')->get();
         return new JeuResource($jeux);
     }
 
-    public function indexMostLiked(Request $request)
-    {
+    public function indexMostLiked(Request $request) {
         $jeux = Jeu::where('valide', true)->get();
         foreach ($jeux as $jeu) {
             $jeu->nb_likes = count($jeu->likes()->get());
@@ -130,8 +134,7 @@ class JeuController extends Controller
         return $jeux->sortByDesc('nb_likes')->take(5);
     }
 
-    public function indexBestRated(Request $request)
-    {
+    public function indexBestRated(Request $request) {
         $jeux = Jeu::where('valide', true)->get();
         foreach ($jeux as $jeu) {
             $commentaires = $jeu->commentaires()->get();
@@ -144,8 +147,7 @@ class JeuController extends Controller
         return $jeux->sortByDesc('note')->take(5);
     }
 
-    public function store(JeuRequest $request)
-    {
+    public function store(JeuRequest $request) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
             try {
                 $jeu = new Jeu();
@@ -182,11 +184,10 @@ class JeuController extends Controller
         }
     }
 
-    public function edit(JeuRequest $request)
-    {
+    public function edit(JeuRequest $request) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
             try {
-                $jeu = new Jeu();
+                $jeu = Jeu::find($request->id);
                 $jeu->nom = $request->nom;
                 $jeu->description = $request->description;
                 $jeu->langue = $request->langue;
@@ -215,8 +216,7 @@ class JeuController extends Controller
         }
     }
 
-    public function edit_url(Request $request, $id)
-    {
+    public function edit_url(Request $request, $id) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
             $jeu = Jeu::find($id);
 
@@ -238,8 +238,7 @@ class JeuController extends Controller
         return $this->throwUnauthorized();
     }
 
-    public function achat(AchatRequest $request, $id)
-    {
+    public function achat(AchatRequest $request, $id) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
 
             try {
@@ -269,8 +268,7 @@ class JeuController extends Controller
         return $this->throwUnauthorized();
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
 
             $achat = Achat::find($id);
@@ -297,8 +295,7 @@ class JeuController extends Controller
         return $this->throwUnauthorized();
     }
 
-    public function show(Request $request, $id)
-    {
+    public function show(Request $request, $id) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent')) {
 
             $jeu = Jeu::find($id);
@@ -314,14 +311,14 @@ class JeuController extends Controller
 
             $commentaires = $jeu->commentaires;
 
-            if ($jeu->likes){
+            if ($jeu->likes) {
                 $nbLikes = $jeu->likes->count();
-                $noteMoyenne = count($jeu->likes()->get()) / $nbLikes;
-
-            } else{
+            } else {
                 $nbLikes = 0;
-                $noteMoyenne = 0;
             }
+
+            $noteMoyenne = round($jeu->commentaires()->average('note'), 2);
+            $prixMoyen = round($jeu->achats()->average('prix'), 2);
 
             return response()->
             json([
@@ -330,8 +327,10 @@ class JeuController extends Controller
                 'achats' => $achats,
                 'commentaires' => $commentaires,
                 'jeu' => new JeuResource($jeu),
+                'likes' => $jeu->likes,
                 'nb_likes' => $nbLikes,
-                'note_moyenne' => $noteMoyenne
+                'note_moyenne' => $noteMoyenne,
+                'prix_moyen' => $prixMoyen
             ], 200);
         }
         return $this->throwUnauthorized();
@@ -340,8 +339,7 @@ class JeuController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function throwUnauthorized(): \Illuminate\Http\JsonResponse
-    {
+    public function throwUnauthorized(): \Illuminate\Http\JsonResponse {
         return response()->json([
             'status' => 'error',
             'message' => 'Unauthorized'
