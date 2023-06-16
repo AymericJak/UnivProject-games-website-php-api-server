@@ -75,5 +75,12 @@ class User extends Authenticatable implements JWTSubject {
         return $this->hasMany(Like::class);
     }
 
-
+    public function hasRole(string $roleName) {
+        foreach ($this->roles()->get() as $role) {
+            if ($role->nom == $roleName) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
