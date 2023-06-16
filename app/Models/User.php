@@ -68,8 +68,7 @@ class User extends Authenticatable implements JWTSubject {
     }
 
     public function achats() {
-        return $this->belongsToMany(Achat::class, 'achats', 'user_id', 'jeu_id')
-            ->withTimestamps();
+        return $this->hasMany(Achat::class);
     }
 
     public function likes() {

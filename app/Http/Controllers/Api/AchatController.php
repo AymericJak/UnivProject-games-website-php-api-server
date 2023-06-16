@@ -78,18 +78,19 @@ class AchatController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        if (!Achat::where('jeu_id', $id)
+        $achat = Achat::where('jeu_id', $id)
             ->where('user_id', Auth::user()->id)
-            ->first()){
+            ->first();
+
+        if (!$achat){
             return response()->json([
                 'status' => 'false',
                 'message' => 'Achat not found'
             ], 200);
         }
         if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
-            $user = Auth::user();
-            $user->achats()->detach($id);
-
+            $achat->delete();
+            //Ca ne marche pas, table pivot jsp comment fix
             return response()->json([
                 'status' => 'success',
                 'message' => 'Achat successfully deleted'
