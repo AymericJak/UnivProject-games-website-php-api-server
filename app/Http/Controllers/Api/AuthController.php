@@ -73,7 +73,7 @@ class AuthController extends Controller {
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'pseudo' => $request->pseudo,
-            'avatar' => 'assets/images/no-avatar.png',
+            'avatar' => 'no-image.png'
         ]);
 
         $credentials = $request->only('email', 'password');
@@ -141,7 +141,7 @@ class AuthController extends Controller {
             ], 403);
         }
         $achats = [];
-        foreach ($user->achats as $achat) {
+        foreach ($user->achats() as $achat) {
             $jeu = Jeu::findOrFail($achat->jeu_id);
             $achats[] = [
                 'user_id' => $achat->user_id,

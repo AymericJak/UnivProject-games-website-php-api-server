@@ -14,6 +14,8 @@ use App\Models\Theme;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class JeuController extends Controller {
 
@@ -504,7 +506,7 @@ class JeuController extends Controller {
                 $jeu->theme_id = Theme::where('nom', $request->theme)->value('id');
                 $jeu->editeur_id = Editeur::where('nom', $request->editeur)->value('id');
                 $jeu->valide = true;
-                $jeu->url_media = isset($request->url_media) ? $request->url_media : "no-image.png";
+                $jeu->url_media = "no-image.png";
                 $jeu->save();
                 return response()->json([
                     'status' => 'success',
@@ -565,74 +567,25 @@ class JeuController extends Controller {
             if (!$jeu) {
                 return response()->json(['status' => 'error', 'message' => 'Jeu introuvable.'], 422);
             }
-
-            if (!isset($request->url_media)) {
-                return response()->json(['status' => 'error', 'message' => 'Renseignez un lien.'], 422);
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+                $file = $request->file('image');
+            } else {
+                return response()->json(['status' => 'error', 'message' => 'Aucun fichier.'], 422);
             }
-            $jeu->url_media = $request->url_media;
+
+
+            $nom = $request->url_media;
+            $now = time();
+            $nom = sprintf("%s_%d.%s", $nom, $now, $file->extension());
+            $file->storeAs('images/oeuvres/', $nom);
+
+            $jeu->url_media = $nom;
 
             if ($jeu->save()) {
                 return response()->json(['status' => 'success', 'message' => 'Game updated successfully', 'jeu' => new JeuResource($jeu)], 200);
             } else {
                 return response()->json(['status' => 'error', 'message' => 'Une erreur est survenue lors de la modification du jeu.'], 422);
             }
-        }
-        return $this->throwUnauthorized();
-    }
-
-    public function achat(AchatRequest $request, $id) {
-        if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
-
-            try {
-                $jeu = Jeu::findOrFail($id);
-                $achat = new Achat();
-                $achat->date_achat = date('Y-m-d');
-                $achat->lieu_achat = $request->lieu_achat;
-                $achat->prix = $request->prix;
-                $achat->user_id = Auth::user()->id;
-                $achat->jeu_id = $id;
-                $achat->save();
-                return response()->json([
-                        'status' => 'success',
-                        'message' => 'Purchase created successfully',
-                        'achat' => $achat,
-                        'adherant' => Auth::user(),
-                        'jeu' => new JeuResource($jeu)]
-                    , 200);
-            } catch (Exception $e) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'L\'achat n\'a pas pu être réalisé',
-                    'errors' => $e,
-                ], 422);
-            }
-        }
-        return $this->throwUnauthorized();
-    }
-
-    public function destroy($id) {
-        if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
-
-            $achat = Achat::find($id);
-            if (!$achat) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'L\'achat n\'existe pas',
-                ], 422);
-            }
-            if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium') && Auth::user()->id == $achat->user_id) {
-
-                $achat->delete();
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Achat successfully deleted'
-                ], 200);
-            }
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized'
-            ], 422);
         }
         return $this->throwUnauthorized();
     }
@@ -649,18 +602,24 @@ class JeuController extends Controller {
             }
             $jeu = Jeu::findOrFail($id);
 
+            $filePath = storage_path("app/images/oeuvres/$jeu->url_media");
+            $image_encoded = base64_encode(File::get($filePath));
+
             $achats = $jeu->achats;
 
             $commentaires = $jeu->commentaires;
 
-            if ($jeu->likes) {
+            if ($jeu->likes && $jeu->likes->count()>= 1) {
                 $nbLikes = $jeu->likes->count();
+                $noteMoyenne = count($jeu->likes()->get()) / $nbLikes;
+                $noteMoyenne = round($jeu->commentaires()->average('note'), 2);
+                $prixMoyen = round($jeu->achats()->average('prix'), 2);
             } else {
                 $nbLikes = 0;
+                $noteMoyenne = 0;
             }
 
-            $noteMoyenne = round($jeu->commentaires()->average('note'), 2);
-            $prixMoyen = round($jeu->achats()->average('prix'), 2);
+
 
             return response()->
             json([
@@ -672,6 +631,7 @@ class JeuController extends Controller {
                 'likes' => $jeu->likes,
                 'nb_likes' => $nbLikes,
                 'note_moyenne' => $noteMoyenne,
+                'image_enc' => $image_encoded,
                 'prix_moyen' => $prixMoyen
             ], 200);
         }
