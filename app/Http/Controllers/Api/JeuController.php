@@ -617,6 +617,7 @@ class JeuController extends Controller {
             } else {
                 $nbLikes = 0;
                 $noteMoyenne = 0;
+                $prixMoyen = 0;
             }
 
 
