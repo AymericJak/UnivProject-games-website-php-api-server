@@ -14,6 +14,8 @@ use App\Models\Theme;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class JeuController extends Controller {
 
@@ -162,7 +164,7 @@ class JeuController extends Controller {
                 $jeu->theme_id = Theme::where('nom', $request->theme)->value('id');
                 $jeu->editeur_id = Editeur::where('nom', $request->editeur)->value('id');
                 $jeu->valide = true;
-                $jeu->url_media = isset($request->url_media) ? $request->url_media : "no-image.png";
+                $jeu->url_media = "no-image.png";
                 $jeu->save();
                 return response()->json([
                     'status' => 'success',
@@ -223,11 +225,19 @@ class JeuController extends Controller {
             if (!$jeu) {
                 return response()->json(['status' => 'error', 'message' => 'Jeu introuvable.'], 422);
             }
-
-            if (!isset($request->url_media)) {
-                return response()->json(['status' => 'error', 'message' => 'Renseignez un lien.'], 422);
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+                $file = $request->file('image');
+            } else {
+                return response()->json(['status' => 'error', 'message' => 'Aucun fichier.'], 422);
             }
-            $jeu->url_media = $request->url_media;
+
+
+            $nom = $request->url_media;
+            $now = time();
+            $nom = sprintf("%s_%d.%s", $nom, $now, $file->extension());
+            $file->storeAs('images/oeuvres/', $nom);
+
+            $jeu->url_media = $nom;
 
             if ($jeu->save()) {
                 return response()->json(['status' => 'success', 'message' => 'Game updated successfully', 'jeu' => new JeuResource($jeu)], 200);
@@ -251,6 +261,9 @@ class JeuController extends Controller {
             }
             $jeu = Jeu::findOrFail($id);
 
+            $filePath = storage_path("app/images/oeuvres/$jeu->url_media");
+            $image_encoded = base64_encode(File::get($filePath));
+
             $achats = $jeu->achats;
 
             $commentaires = $jeu->commentaires;
@@ -273,7 +286,8 @@ class JeuController extends Controller {
                 'jeu' => new JeuResource($jeu),
                 'likes' => $jeu->likes,
                 'nb_likes' => $nbLikes,
-                'note_moyenne' => $noteMoyenne
+                'note_moyenne' => $noteMoyenne,
+                'image_enc' => $image_encoded
             ], 200);
         }
         return $this->throwUnauthorized();

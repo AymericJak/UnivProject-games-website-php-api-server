@@ -43,7 +43,7 @@ Route::get('jeu', [\App\Http\Controllers\Api\JeuController::class, 'index']);
 //Route::get('jeu/FiltrageBestRated', [\App\Http\Controllers\Api\JeuController::class, 'indexBestRated']);
 
 Route::patch('jeu/{id}/edit', [\App\Http\Controllers\Api\JeuController::class, 'edit'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
-Route::patch('jeu/{id}/editUrl', [\App\Http\Controllers\Api\JeuController::class, 'edit_url'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
+Route::post('jeu/{id}/editUrl', [\App\Http\Controllers\Api\JeuController::class, 'edit_url'])->middleware(['auth','role:adherent-premium','role:administrateur']);;
 
 Route::post('jeu/{id}/achat', [\App\Http\Controllers\Api\AchatController::class, 'create'])->middleware(['auth']);
 Route::delete('jeu/{id}/achat', [\App\Http\Controllers\Api\AchatController::class, 'destroy'])->middleware(['auth']);

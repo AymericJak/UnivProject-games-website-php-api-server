@@ -41,7 +41,7 @@ class LikeController extends Controller
         }
     }
 
-    public function update(string $id)
+    public function update(Request $request, string $id)
     {
         $user_id = auth()->user()->id;
         $like = Like::where('jeu_id', $id)
