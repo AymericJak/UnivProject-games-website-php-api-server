@@ -58,6 +58,7 @@ Route::patch('jeu/{id}/commentaires/{id}', [\App\Http\Controllers\Api\Commentair
 Route::delete('/jeu/{id}/like', [\App\Http\Controllers\Api\LikeController::class,'destroy'])->middleware(['auth', 'role:adherent','role:adherent-premium','role:commentaire-moderateur','role:administrateur']);
 Route::post('/jeu/{id}/like', [\App\Http\Controllers\Api\LikeController::class,'update'])->middleware(['auth', 'role:adherent','role:adherent-premium','role:commentaire-moderateur','role:administrateur']);
 
+Route::get('/jeu/{id}/like/check', [\App\Http\Controllers\Api\LikeController::class, 'checkUserLike'])->middleware(['auth']);
 
 Route::get('editeurs', [EditeurController::class, 'index']);
 
