@@ -19,7 +19,12 @@ class AuthController extends Controller {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    public function login(Request $request) {
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse
+    {
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
@@ -45,7 +50,12 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function register(Request $request) {
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function register(Request $request): JsonResponse
+    {
         $request->validate([
             'login' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
@@ -59,11 +69,11 @@ class AuthController extends Controller {
             'login' => $request->login,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'valide' => false,
+            'valide' => true,
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'pseudo' => $request->pseudo,
-            'avatar' => 'avatarParDefaut.png'
+            'avatar' => 'no-avatar.png',
         ]);
 
         $credentials = $request->only('email', 'password');
@@ -88,7 +98,11 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function logout() {
+    /**
+     * @return JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
         Auth::logout();
         return response()->json([
             'status' => 'success',
@@ -96,7 +110,11 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function refresh() {
+    /**
+     * @return JsonResponse
+     */
+    public function refresh(): JsonResponse
+    {
         return response()->json([
             'status' => 'success',
             'user' => new UserResource(Auth::user()),
@@ -107,7 +125,12 @@ class AuthController extends Controller {
         ]);
     }
 
-    public function profil($user_id = 0) {
+    /**
+     * @param int $user_id
+     * @return JsonResponse
+     */
+    public function profil(int $user_id = 0): JsonResponse
+    {
         if ($user_id === 0)
             $user_id = Auth::user()->id;
         $user = User::findOrFail($user_id);
