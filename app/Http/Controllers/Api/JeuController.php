@@ -551,7 +551,7 @@ class JeuController extends Controller {
                 $jeu->save();
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Game created successfully',
+                    'message' => 'Game updated successfully',
                     'jeu' => new JeuResource($jeu),
                 ], 200);
             } catch (Exception $e) {
