@@ -21,7 +21,7 @@ class AchatController extends Controller
             try {
                 $jeu = Jeu::findOrFail($id);
                 $achat = new Achat();
-                $achat->date_achat = date('Y-m-d');
+                $achat->date_achat = $request->date;//date('Y-m-d');
                 $achat->lieu_achat = $request->lieu_achat;
                 $achat->prix = $request->prix;
                 $achat->user_id = Auth::user()->id;
