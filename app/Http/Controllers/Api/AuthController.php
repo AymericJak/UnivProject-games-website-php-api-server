@@ -73,7 +73,7 @@ class AuthController extends Controller {
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'pseudo' => $request->pseudo,
-            'avatar' => 'no-avatar.png',
+            'avatar' => 'assets/images/no-avatar.png',
         ]);
 
         $credentials = $request->only('email', 'password');
