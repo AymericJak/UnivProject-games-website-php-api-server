@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Commentaire extends Model
 {
     use HasFactory;
-
+    protected $fillable = [
+        "id"
+    ];
     public function jeu() {
         return $this->belongsTo(Jeu::class);
     }
