@@ -120,7 +120,7 @@ class AuthController extends Controller {
             "message" => "Successfully profil info",
             'adherent' => new UserResource($user),
             'commentaires' => $user->commentaires,
-            'achats' => $user->achats,
+            'achats' => $user->achats(),
             'likes' => $user->likes
         ]);
     }
