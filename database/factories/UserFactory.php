@@ -27,7 +27,7 @@ class UserFactory extends Factory {
             'nom' => $nom,
             'prenom' => $prenom,
             'pseudo' => $prenom[0] . $nom,
-            'avatar' => "testAvatar.png",
+            'avatar' => 'assets/images/no-avatar.png',
             'remember_token' => Str::random(10),
         ];
     }

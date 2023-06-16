@@ -168,13 +168,13 @@ class JeuController extends Controller {
                 $jeu->save();
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Game updated successfully',
+                    'message' => 'Game created successfully',
                     'jeu' => new JeuResource($jeu),
                 ], 200);
             } catch (Exception $e) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Le jeu n\'a pas pu être update',
+                    'message' => 'Le jeu n\'a pas pu être créé',
                     'errors' => $e,
                 ], 422);
             }
@@ -248,7 +248,6 @@ class JeuController extends Controller {
         return $this->throwUnauthorized();
     }
 
-
     public function show(Request $request, $id) {
         if (Auth::user()->roles()->pluck('nom')->contains('adherent')) {
 
@@ -271,11 +270,14 @@ class JeuController extends Controller {
             if ($jeu->likes && $jeu->likes->count()>= 1) {
                 $nbLikes = $jeu->likes->count();
                 $noteMoyenne = count($jeu->likes()->get()) / $nbLikes;
-
+                $noteMoyenne = round($jeu->commentaires()->average('note'), 2);
+                $prixMoyen = round($jeu->achats()->average('prix'), 2);
             } else {
                 $nbLikes = 0;
                 $noteMoyenne = 0;
             }
+
+
 
             return response()->
             json([
@@ -287,7 +289,8 @@ class JeuController extends Controller {
                 'likes' => $jeu->likes,
                 'nb_likes' => $nbLikes,
                 'note_moyenne' => $noteMoyenne,
-                'image_enc' => $image_encoded
+                'image_enc' => $image_encoded,
+                'prix_moyen' => $prixMoyen
             ], 200);
         }
         return $this->throwUnauthorized();
