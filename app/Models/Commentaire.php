@@ -9,13 +9,16 @@ class Commentaire extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "id"
+        'id',
     ];
-    public function jeu() {
+
+    public function jeu()
+    {
         return $this->belongsTo(Jeu::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

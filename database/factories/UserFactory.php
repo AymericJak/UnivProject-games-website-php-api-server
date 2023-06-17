@@ -9,17 +9,20 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
-class UserFactory extends Factory {
+class UserFactory extends Factory
+{
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array {
+    public function definition(): array
+    {
         $prenom = fake()->firstName();
         $nom = fake()->lastName();
+
         return [
-            'login' => $prenom . "." . $nom,
+            'login' => $prenom . '.' . $nom,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => Hash::make('Password'),
@@ -35,8 +38,9 @@ class UserFactory extends Factory {
     /**
      * Indicate that the model's email address should be unverified.
      */
-    public function unverified(): static {
-        return $this->state(fn(array $attributes) => [
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

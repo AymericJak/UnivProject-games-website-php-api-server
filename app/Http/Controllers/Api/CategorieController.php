@@ -12,19 +12,19 @@ use OpenApi\Attributes as OA;
 class CategorieController extends Controller
 {
     #[OA\Get(
-        path: "/api/categories",
-        operationId: "index",
-        description: "The list of names of categories",
-        tags: ["Categories"],
+        path: '/api/categories',
+        operationId: 'index',
+        description: 'The list of names of categories',
+        tags: ['Categories'],
         responses: [
             new OA\Response(
                 response: 200,
-                description: "The list of names of categories",
+                description: 'The list of names of categories',
                 content: new OA\JsonContent(
-                    type: "array",
+                    type: 'array',
                     items: new OA\Items(properties: [
-                        new OA\Property(property: "categories", type: "array"),
-                    ], type: "object")
+                        new OA\Property(property: 'categories', type: 'array'),
+                    ], type: 'object')
                 )
             ),
         ]
@@ -36,6 +36,7 @@ class CategorieController extends Controller
     {
         $categoriesNoms = Categorie::pluck('nom');
         $categoriesCollection = collect(['categories' => $categoriesNoms]);
+
         return CategorieResource::collection($categoriesCollection);
     }
 

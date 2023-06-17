@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Categorie;
 use App\Models\Theme;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ThemeSeeder extends Seeder

@@ -12,19 +12,19 @@ use OpenApi\Attributes as OA;
 class ThemeController extends Controller
 {
     #[OA\Get(
-        path: "/api/themes",
-        operationId: "index",
+        path: '/api/themes',
+        operationId: 'index',
         description: "The list of theme's names",
-        tags: ["Themes"],
+        tags: ['Themes'],
         responses: [
             new OA\Response(
                 response: 200,
                 description: "The list of theme's names",
                 content: new OA\JsonContent(
-                    type: "array",
+                    type: 'array',
                     items: new OA\Items(properties: [
-                        new OA\Property(property: "themes", type: "array"),
-                    ], type: "object")
+                        new OA\Property(property: 'themes', type: 'array'),
+                    ], type: 'object')
                 )
             ),
         ]
@@ -36,6 +36,7 @@ class ThemeController extends Controller
     {
         $themesNoms = Theme::pluck('nom');
         $themesCollection = collect(['theme' => $themesNoms]);
+
         return ThemeResource::collection($themesCollection);
     }
 
