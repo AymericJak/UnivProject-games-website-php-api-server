@@ -69,12 +69,18 @@ class JeuController extends Controller {
             $jeux = $query->get();
             $listeJeux = [];
             foreach ($jeux as $jeu) {
-                $listeJeux[] = new JeuResource($jeu);
+                $tmp_jeu = new JeuResource($jeu);
+
+                $filePath = storage_path("app/images/oeuvres/$jeu->url_media");
+                $image_encoded = base64_encode(File::get($filePath));
+
+                $tmp_jeu->url_media = $image_encoded;
+                $listeJeux[] = $tmp_jeu;
             }
             return response()->json([
                 'status' => true,
-                'jeux' => $listeJeux
-            ], 200);
+                'jeux' => $listeJeux,
+                ]);
         }
         return response()->json([
             'status' => 'error',
@@ -545,7 +551,7 @@ class JeuController extends Controller {
                 $jeu->save();
                 return response()->json([
                     'status' => 'success',
-                    'message' => 'Game created successfully',
+                    'message' => 'Game updated successfully',
                     'jeu' => new JeuResource($jeu),
                 ], 200);
             } catch (Exception $e) {
@@ -602,8 +608,13 @@ class JeuController extends Controller {
             }
             $jeu = Jeu::findOrFail($id);
 
-            $filePath = storage_path("app/images/oeuvres/$jeu->url_media");
-            $image_encoded = base64_encode(File::get($filePath));
+            try{
+                $filePath = storage_path("app/images/oeuvres/$jeu->url_media");
+                $image_encoded = base64_encode(File::get($filePath));
+            }catch (Exception $e){
+                $filePath = storage_path("app/images/oeuvres/no-image.png");
+                $image_encoded = base64_encode(File::get($filePath));
+            }
 
             $achats = $jeu->achats;
 

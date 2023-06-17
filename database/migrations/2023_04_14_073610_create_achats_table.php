@@ -13,6 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Nous avons préféré ne pas mettre date_achat comme clé primaire car cela fesait plus sens pour nous qu'un utilisateur ne pouvait acheter qu'une fois un jeu
         Schema::create('achats', function (Blueprint $table) {
             $table->primary(['user_id', 'jeu_id']);
             $table->foreignIdFor(User::class)
