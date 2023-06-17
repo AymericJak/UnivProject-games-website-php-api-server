@@ -578,7 +578,7 @@ class JeuController extends Controller
         }
     }
 
-    public function edit_url(Request $request, $id)
+    public function editUrl(Request $request, $id)
     {
         if (auth()->user()->roles()->pluck('nom')->contains('adherent-premium')) {
             $jeu = Jeu::find($id);

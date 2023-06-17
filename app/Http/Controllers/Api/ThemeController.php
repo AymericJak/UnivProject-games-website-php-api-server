@@ -7,23 +7,27 @@ use App\Http\Resources\ThemeResource;
 use App\Models\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use OpenApi\Attributes as OA;
+use OpenApi\Attributes\Get;
+use OpenApi\Attributes\Items;
+use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\Response;
 
 class ThemeController extends Controller
 {
-    #[OA\Get(
+    #[Get(
         path: '/api/themes',
         operationId: 'index',
         description: "The list of theme's names",
         tags: ['Themes'],
         responses: [
-            new OA\Response(
+            new Response(
                 response: 200,
                 description: "The list of theme's names",
-                content: new OA\JsonContent(
+                content: new JsonContent(
                     type: 'array',
-                    items: new OA\Items(properties: [
-                        new OA\Property(property: 'themes', type: 'array'),
+                    items: new Items(properties: [
+                        new Property(property: 'themes', type: 'array'),
                     ], type: 'object')
                 )
             ),

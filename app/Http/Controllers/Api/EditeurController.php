@@ -6,26 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\EditeurResource;
 use App\Models\Editeur;
 use Exception;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use OpenApi\Attributes as OA;
+use OpenApi\Attributes\Get;
+use OpenApi\Attributes\Items;
+use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\Response;
 
 class EditeurController extends Controller
 {
-    #[OA\Get(
+    #[Get(
         path: '/api/editeurs',
         operationId: 'index',
         description: "The list of editor's names",
         tags: ['Editors'],
         responses: [
-            new OA\Response(
+            new Response(
                 response: 200,
                 description: "The list of editor's names",
-                content: new OA\JsonContent(
+                content: new JsonContent(
                     type: 'array',
-                    items: new OA\Items(properties: [
-                        new OA\Property(property: 'editeurs', type: 'array'),
+                    items: new Items(properties: [
+                        new Property(property: 'editeurs', type: 'array'),
                     ], type: 'object')
                 )
             ),

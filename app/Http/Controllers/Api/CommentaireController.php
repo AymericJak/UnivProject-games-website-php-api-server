@@ -9,7 +9,16 @@ use App\Models\Commentaire;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Gate;
-use OpenApi\Attributes as OA;
+use OpenApi\Attributes\Delete;
+use OpenApi\Attributes\Items;
+use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Parameter;
+use OpenApi\Attributes\Post;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\Put;
+use OpenApi\Attributes\RequestBody;
+use OpenApi\Attributes\Response;
+use OpenApi\Attributes\Schema;
 
 class CommentaireController extends Controller
 {
@@ -24,33 +33,33 @@ class CommentaireController extends Controller
 
     }
 
-    #[OA\Post(
+    #[Post(
         path: '/api/commentaire',
         operationId: 'create',
         description: 'Ajouter un commentaire dans la base de données',
-        requestBody: new OA\RequestBody(
+        requestBody: new RequestBody(
             required: true,
         ),
         tags: ['Commentaires'],
         responses: [
-            new OA\Response(
+            new Response(
                 response: 200,
                 description: "Création d'un commentaire",
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'status', type: 'boolean'),
-                    new OA\Property(property: 'message', type: 'string'),
-                    new OA\Property(property: 'commentaire'),
+                content: new JsonContent(properties: [
+                    new Property(property: 'status', type: 'boolean'),
+                    new Property(property: 'message', type: 'string'),
+                    new Property(property: 'commentaire'),
                 ], type: 'object')
             ),
-            new OA\Response(
+            new Response(
                 response: 422,
                 description: 'Erreur',
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'message', type: 'string'),
-                    new OA\Property(
+                content: new JsonContent(properties: [
+                    new Property(property: 'message', type: 'string'),
+                    new Property(
                         property: 'errors',
                         properties: [
-                            new OA\Property(property: 'commentaire|date_com|note|etat', type: 'array', items: new OA\Items(type: 'string')),
+                            new Property(property: 'commentaire|date_com|note|etat', type: 'array', items: new Items(type: 'string')),
                         ],
                         type: 'object',
                     ),
@@ -103,28 +112,28 @@ class CommentaireController extends Controller
         //
     }
 
-    #[OA\Put(
+    #[Put(
         path: '/commentaires/{id}',
         operationId: 'update',
         description: 'Modifier un commentaire dans la base',
-        requestBody: new OA\RequestBody(
+        requestBody: new RequestBody(
             required: true,
         ), tags: ['Commentaires'],
         parameters: [
-            new OA\Parameter(
+            new Parameter(
                 name: 'id',
                 description: 'Identifiant du commentaire',
                 in: 'path', required: 'true',
-                schema: new OA\Schema(type: 'integer')),
+                schema: new Schema(type: 'integer')),
         ],
         responses: [
-            new OA\Response(
+            new Response(
                 response: 200,
                 description: "Modification d'un commentaire",
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'status', type: 'boolean'),
-                    new OA\Property(property: 'message', type: 'string'),
-                    new OA\Property(property: 'commentaire'),
+                content: new JsonContent(properties: [
+                    new Property(property: 'status', type: 'boolean'),
+                    new Property(property: 'message', type: 'string'),
+                    new Property(property: 'commentaire'),
                 ], type: 'object')
             ),
         ],
@@ -170,34 +179,34 @@ class CommentaireController extends Controller
 
     }
 
-    #[OA\Delete(
+    #[Delete(
         path: '/commentaires/{id}',
         operationId: 'destroy',
         description: 'Supprime un commentaire',
         tags: ['Commentaires'],
         parameters: [
-            new OA\Parameter(
+            new Parameter(
                 name: 'id',
                 description: 'Identifiant du commentaire',
                 in: 'path', required: 'true',
-                schema: new OA\Schema(type: 'integer')),
+                schema: new Schema(type: 'integer')),
         ],
         responses: [
-            new OA\Response(
+            new Response(
                 response: 200,
                 description: 'Supprime un commentaire',
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'status', type: 'boolean'),
-                    new OA\Property(property: 'message', type: 'string'),
+                content: new JsonContent(properties: [
+                    new Property(property: 'status', type: 'boolean'),
+                    new Property(property: 'message', type: 'string'),
                 ], type: 'object')
             ),
-            new OA\Response(
+            new Response(
                 response: 404,
                 description: 'Commentaire non trouvée',
-                content: new OA\JsonContent(properties: [
-                    new OA\Property(property: 'message', type: 'string'),
-                    new OA\Property(property: 'errors', properties: [
-                        new OA\Property(property: 'id', type: 'array', items: new OA\Items(type: 'string')),
+                content: new JsonContent(properties: [
+                    new Property(property: 'message', type: 'string'),
+                    new Property(property: 'errors', properties: [
+                        new Property(property: 'id', type: 'array', items: new Items(type: 'string')),
                     ], type: 'object'
                     ),
                 ], type: 'object')
