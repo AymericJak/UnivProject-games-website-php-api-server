@@ -10,7 +10,8 @@ class Theme extends Model
 {
     use HasFactory;
 
-    public function jeux(): HasMany {
+    public function jeux(): HasMany
+    {
         return $this->hasMany(Jeu::class);
     }
 }

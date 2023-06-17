@@ -29,7 +29,7 @@ class CommentaireRequest extends FormRequest
             'note' => 'required|integer|min:1|max:5',
             'jeu_id' => 'numeric|nullable',
             'user_id' => 'required',
-            'etat' => 'required'
+            'etat' => 'required',
         ];
     }
 }

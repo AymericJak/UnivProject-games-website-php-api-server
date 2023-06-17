@@ -10,21 +10,16 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-use function Sodium\add;
 
-class AuthController extends Controller {
-
-    public function __construct() {
+class AuthController extends Controller
+{
+    public function __construct()
+    {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function login(Request $request): JsonResponse
     {
         $request->validate([
@@ -33,14 +28,15 @@ class AuthController extends Controller {
         ]);
         $credentials = $request->only('email', 'password');
 
-        $token = Auth::attempt($credentials);
-        if (!$token) {
+        $token = auth()->attempt($credentials);
+        if (! $token) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized',
             ], 401);
         }
-        $user = Auth::user();
+        $user = auth()->user();
+
         return response()->json([
             'status' => 'success',
             'message' => 'Adherent logged successfully',
@@ -48,14 +44,10 @@ class AuthController extends Controller {
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
-            ]
+            ],
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function register(Request $request): JsonResponse
     {
         $request->validate([
@@ -75,19 +67,18 @@ class AuthController extends Controller {
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'pseudo' => $request->pseudo,
-            'avatar' => 'no-image.png'
+            'avatar' => 'no-image.png',
         ]);
 
         $credentials = $request->only('email', 'password');
 
-        $token = Auth::attempt($credentials);
-        if (!$token) {
+        $token = auth()->attempt($credentials);
+        if (! $token) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Unauthorized',
             ], 401);
         }
-
 
         return response()->json([
             'status' => 'success',
@@ -96,58 +87,50 @@ class AuthController extends Controller {
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer',
-            ]
+            ],
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function logout(): JsonResponse
     {
-        Auth::logout();
+        auth()->logout();
+
         return response()->json([
             'status' => 'success',
             'message' => 'Successfully logged out',
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function refresh(): JsonResponse
     {
         return response()->json([
             'status' => 'success',
-            'user' => new UserResource(Auth::user()),
+            'user' => new UserResource(auth()->user()),
             'authorisation' => [
-                'token' => Auth::refresh(),
+                'token' => auth()->refresh(),
                 'type' => 'bearer',
-            ]
+            ],
         ]);
     }
 
-    /**
-     * @param int $user_id
-     * @return JsonResponse
-     */
     public function profil(int $user_id = 0): JsonResponse
     {
-        if ($user_id === 0)
-            $user_id = Auth::user()->id;
+        if ($user_id === 0) {
+            $user_id = auth()->user()->id;
+        }
         $user = User::findOrFail($user_id);
 
-        try{
-            $filePath = storage_path("app/images/oeuvres/$user->avatar");
+        try {
+            $filePath = storage_path("app/images/oeuvres/{$user->avatar}");
             $image_encoded = base64_encode(File::get($filePath));
-        }catch (Exception $e){
-            $filePath = storage_path("app/images/oeuvres/no-image.png");
+        } catch (Exception $e) {
+            $filePath = storage_path('app/images/oeuvres/no-image.png');
             $image_encoded = base64_encode(File::get($filePath));
         }
-        if (!Auth::check() || (Auth::user()->id != $user_id && !Auth::user()->isAdmin())) {
+        if (! auth()->check() || (auth()->user()->id != $user_id && ! auth()->user()->isAdmin())) {
             return response()->json([
-                "status" => "error",
-                "message" => "Unauthorized"
+                'status' => 'error',
+                'message' => 'Unauthorized',
             ], 403);
         }
         $achats = [];
@@ -172,9 +155,10 @@ class AuthController extends Controller {
                 'jeu_nom' => $jeu->nom,
             ];
         }
+
         return response()->json([
             'status' => 'success',
-            "message" => "Successfully profil info",
+            'message' => 'Successfully profil info',
             'adherent' => new UserResource($user),
             'commentaires' => $user->commentaires,
             'achats' => $achats,
@@ -182,17 +166,12 @@ class AuthController extends Controller {
         ]);
     }
 
-    /**
-     * @param AdherentRequest $request
-     * @param $user_id
-     * @return JsonResponse
-     */
     public function update(AdherentRequest $request, $user_id): JsonResponse
     {
-        if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
+        if (! auth()->user()->isAdmin() && auth()->user()->id != $user_id) {
             return response()->json([
-                "status" => "error",
-                "message" => "Unauthorized"
+                'status' => 'error',
+                'message' => 'Unauthorized',
             ], 422);
         }
 
@@ -200,29 +179,25 @@ class AuthController extends Controller {
 
         if ($request->has('password')) {
             $request->merge([
-                'password' => Hash::make($request->input('password'))
+                'password' => Hash::make($request->input('password')),
             ]);
         }
 
         $user->update($request->all());
+
         return response()->json([
-            'status' => "success",
-            'message' => "Adherent updated successfully",
-            'adherent' => new UserResource($user)
+            'status' => 'success',
+            'message' => 'Adherent updated successfully',
+            'adherent' => new UserResource($user),
         ], 200);
     }
 
-    /**
-     * @param Request $request
-     * @param $user_id
-     * @return JsonResponse
-     */
     public function updateAvatar(Request $request, $user_id): JsonResponse
     {
-        if (!Auth::user()->isAdmin() && Auth::user()->id != $user_id) {
+        if (! auth()->user()->isAdmin() && auth()->user()->id != $user_id) {
             return response()->json([
-                "status" => "error",
-                "message" => "Unauthorized"
+                'status' => 'error',
+                'message' => 'Unauthorized',
             ], 422);
         }
 
@@ -234,18 +209,17 @@ class AuthController extends Controller {
             return response()->json(['status' => 'error', 'message' => 'Aucun fichier.'], 422);
         }
 
-
         $nom = $request->url_media;
         $now = time();
-        $nom = sprintf("%s_%d.%s", $nom, $now, $file->extension());
+        $nom = sprintf('%s_%d.%s', $nom, $now, $file->extension());
         $file->storeAs('images/oeuvres/', $nom);
 
         $user->avatar = $nom;
         $user->save();
 
         return response()->json([
-            'status' => "success",
-            'message' => "Adherent avatar updated successfully"
+            'status' => 'success',
+            'message' => 'Adherent avatar updated successfully',
         ], 200);
     }
 }

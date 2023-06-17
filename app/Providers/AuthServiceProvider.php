@@ -30,13 +30,13 @@ class AuthServiceProvider extends ServiceProvider
             return $user->id === $commentaire->user_id || $user->roles()->pluck('nom')->contains('administrateur') || $user->roles()->pluck('nom')->contains('commentaire-moderateur');
         });
         Gate::define('store-commentaire', function ($user) {
-            return $user->roles()->pluck('id')->contains(1)||
+            return $user->roles()->pluck('id')->contains(1) ||
                 $user->roles()->pluck('id')->contains(2) ||
                 $user->roles()->pluck('id')->contains(3) ||
-                $user->roles()->pluck('id')->contains(4) ;
+                $user->roles()->pluck('id')->contains(4);
         });
-        Gate::define('update-like', function ($user, $like){
-            return $user->roles()->pluck('id')->contains(1)|| $user->id == $like->user_id;
+        Gate::define('update-like', function ($user, $like) {
+            return $user->roles()->pluck('id')->contains(1) || $user->id == $like->user_id;
         });
     }
 }
