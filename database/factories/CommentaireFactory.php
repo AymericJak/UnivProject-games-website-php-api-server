@@ -19,10 +19,11 @@ class CommentaireFactory extends Factory
     public function definition(): array
     {
         $debut = $this->faker->dateTimeBetween('-3 months', '+3months');
+
         return [
-            'jeu_id'=>$this->faker->randomElement(Jeu::all()->pluck('id')),
-            'user_id'=>$this->faker->randomElement(User::all()->pluck('id')),
-            'commentaire' => substr($this->faker->paragraph(),0, 100),
+            'jeu_id' => $this->faker->randomElement(Jeu::all()->pluck('id')),
+            'user_id' => $this->faker->randomElement(User::all()->pluck('id')),
+            'commentaire' => substr($this->faker->paragraph(), 0, 100),
             'date_com' => $this->faker->dateTimeBetween($debut, $this->faker->dateTimeInInterval($debut, '3 hours')),
             'note' => $this->faker->numberBetween(1, 5),
             'etat' => $this->faker->randomElement(['attente de validation', 'public']),

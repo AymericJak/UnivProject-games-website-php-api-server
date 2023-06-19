@@ -20,11 +20,11 @@ class JeuResource extends JsonResource
             $filePath = storage_path("app/images/oeuvres/{$this->url_media}");
             $image_encoded = base64_encode(File::get($filePath));
         } catch (Exception $e) {
-            $filePath = storage_path("app/images/oeuvres/no-image.png");
+            $filePath = storage_path('app/images/oeuvres/no-image.png');
             $image_encoded = base64_encode(File::get($filePath));
         }
 
-        $image_encoded = "data:image/png;base64," . $image_encoded;
+        $image_encoded = 'data:image/png;base64,' . $image_encoded;
 
         return [
             'id' => $this->id,

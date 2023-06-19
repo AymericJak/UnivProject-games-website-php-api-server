@@ -9,11 +9,13 @@ class Achat extends Model
 {
     use HasFactory;
 
-    function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    function jeu(){
+    public function jeu()
+    {
         return $this->belongsTo(Jeu::class);
     }
 }

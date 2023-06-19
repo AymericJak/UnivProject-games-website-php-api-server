@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             $filePath = storage_path("app/images/oeuvres/{$this->avatar}");
             $image_encoded = base64_encode(File::get($filePath));
         } catch (Exception $e) {
-            $filePath = storage_path("app/images/oeuvres/no-image.png");
+            $filePath = storage_path('app/images/oeuvres/no-image.png');
             $image_encoded = base64_encode(File::get($filePath));
         }
 

@@ -4,11 +4,10 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\JeuResource;
-use Exception;
-use Illuminate\Http\Request;
 use App\Models\Achat;
 use App\Models\Jeu;
-use Illuminate\Support\Facades\Auth;
+use Exception;
+use Illuminate\Http\Request;
 
 class AchatController extends Controller
 {
@@ -16,24 +15,24 @@ class AchatController extends Controller
 
     public function create(Request $request, $id)
     {
-        if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
+        if (auth()->user()->roles()->pluck('nom')->contains('adherent-premium')) {
 
             try {
                 $jeu = Jeu::findOrFail($id);
-                $achat = new Achat();
-                $achat->date_achat = $request->date;//date('Y-m-d');
+                $achat = new Achat;
+                $achat->date_achat = $request->date; //date('Y-m-d');
                 $achat->lieu_achat = $request->lieu_achat;
                 $achat->prix = $request->prix;
-                $achat->user_id = Auth::user()->id;
+                $achat->user_id = auth()->user()->id;
                 $achat->jeu_id = $id;
                 $achat->save();
+
                 return response()->json([
-                        'status' => 'success',
-                        'message' => 'Purchase created successfully',
-                        'achat' => $achat,
-                        'adherant' => Auth::user(),
-                        'jeu' => new JeuResource($jeu)]
-                    , 200);
+                    'status' => 'success',
+                    'message' => 'Purchase created successfully',
+                    'achat' => $achat,
+                    'adherant' => auth()->user(),
+                    'jeu' => new JeuResource($jeu)], 200);
             } catch (Exception $e) {
                 return response()->json([
                     'status' => 'error',
@@ -42,10 +41,11 @@ class AchatController extends Controller
                 ], 422);
             }
         }
+
         return $this->throwUnauthorized();
     }
 
-    public function update(Request $request,string $id)
+    public function update(Request $request, string $id)
     {
         $user_id = auth()->user()->id;
         $like = Achat::where('jeu_id', $id)
@@ -75,32 +75,29 @@ class AchatController extends Controller
         //
     }
 
-
     public function destroy(Request $request, $id)
     {
         $achat = Achat::where('jeu_id', $id)
-            ->where('user_id', Auth::user()->id)
+            ->where('user_id', auth()->user()->id)
             ->first();
 
-        if (!$achat){
+        if (! $achat) {
             return response()->json([
                 'status' => 'false',
-                'message' => 'Achat not found'
+                'message' => 'Achat not found',
             ], 200);
         }
-        if (Auth::user()->roles()->pluck('nom')->contains('adherent-premium')) {
+        if (auth()->user()->roles()->pluck('nom')->contains('adherent-premium')) {
             Achat::where('jeu_id', $id)
-                ->where('user_id', Auth::user()->id)
+                ->where('user_id', auth()->user()->id)
                 ->delete();
             //Ca ne marche pas, table pivot jsp comment fix
             return response()->json([
                 'status' => 'success',
-                'message' => 'Achat successfully deleted'
+                'message' => 'Achat successfully deleted',
             ], 200);
         }
 
         return $this->throwUnauthorized();
     }
-
-
 }
